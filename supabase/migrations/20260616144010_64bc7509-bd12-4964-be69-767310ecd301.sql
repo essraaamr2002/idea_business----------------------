@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.protect_community_portals_cols() FROM PUBLIC, anon, authenticated;

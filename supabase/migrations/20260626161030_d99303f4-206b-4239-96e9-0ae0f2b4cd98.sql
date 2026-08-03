@@ -1,0 +1,1 @@
+UPDATE public.membership_plans SET projects_cap = 3 WHERE tier = 'basic';

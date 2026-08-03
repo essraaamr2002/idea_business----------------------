@@ -1,0 +1,1 @@
+REVOKE ALL ON public.market_stats_mv FROM anon, authenticated;

@@ -1,0 +1,22 @@
+import { QueryClient } from "@tanstack/react-query";
+import { createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+import { BrandLoader } from "@/components/BrandLoader";
+
+export const getRouter = () => {
+  const queryClient = new QueryClient();
+
+  const router = createRouter({
+    routeTree,
+    context: { queryClient },
+    scrollRestoration: true,
+    defaultPreload: "intent",
+    defaultPreloadDelay: 50,
+    defaultPreloadStaleTime: 0,
+    defaultPendingComponent: () => <BrandLoader variant="page" />,
+    defaultPendingMs: 400,
+    defaultPendingMinMs: 100,
+  });
+
+  return router;
+};

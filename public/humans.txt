@@ -1,0 +1,10 @@
+/* TEAM */
+Site: حراج المشاريع
+URL: https://busniss.org
+Contact: hello@busniss.org
+
+/* THANKS */
+For our investors, founders, and community.
+
+/* TECHNOLOGY */
+Stack: TanStack Start, React, TypeScript, Tailwind CSS, Supabase

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<title>سند لأمر — نموذج جاهز للتعبئة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  @page { size: A4; margin: 22mm 18mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif; color: #0f172a; line-height: 1.9; max-width: 800px; margin: 24px auto; padding: 0 16px; }
+  h1 { text-align: center; font-size: 26px; margin: 0 0 4px; letter-spacing: 1px; }
+  .sub { text-align: center; color: #475569; margin-bottom: 22px; font-size: 13px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; margin: 8px 0; }
+  .field { border-bottom: 1px dashed #94a3b8; min-width: 180px; padding: 0 6px; flex: 1; }
+  p { margin: 10px 0; font-size: 15px; }
+  .box { border: 1px solid #cbd5e1; padding: 14px 16px; border-radius: 8px; margin: 14px 0; background: #f8fafc; }
+  .sign { display: flex; justify-content: space-between; margin-top: 60px; gap: 40px; }
+  .sign div { flex: 1; border-top: 1px solid #0f172a; padding-top: 6px; text-align: center; font-size: 13px; }
+  .actions { text-align: center; margin: 18px 0; }
+  .actions button { background: #0f172a; color: #fff; border: 0; padding: 10px 22px; font-size: 14px; border-radius: 999px; cursor: pointer; margin: 0 4px; }
+  .note { font-size: 11px; color: #64748b; margin-top: 26px; text-align: center; }
+  @media print { .actions, .note { display: none; } body { margin: 0; } }
+</style>
+</head>
+<body>
+  <div class="actions">
+    <button onclick="window.print()">🖨️ طباعة / حفظ PDF</button>
+  </div>
+
+  <h1>سَنَدٌ لِأَمْر</h1>
+  <div class="sub">نموذج استرشادي — يُعبَّأ بخط اليد ويُوقَّع من المُحرِّر</div>
+
+  <div class="row">
+    <div>المبلغ بالأرقام: <span class="field"></span></div>
+    <div>العملة: <span class="field"></span></div>
+  </div>
+  <div class="row">
+    <div>التاريخ: <span class="field"></span></div>
+    <div>مكان التحرير: <span class="field"></span></div>
+  </div>
+
+  <div class="box">
+    <p>أقرّ أنا الموقّع أدناه:</p>
+    <p>الاسم الكامل: <span class="field"></span></p>
+    <p>رقم الهوية / السجل: <span class="field"></span></p>
+    <p>العنوان: <span class="field"></span></p>
+    <p>الجوال: <span class="field"></span></p>
+  </div>
+
+  <p>
+    بأن أدفعَ بموجب هذا السند لأمر السيد/ <span class="field"></span>
+    أو لأمر مَن يَؤول إليه هذا السند بطريق التظهير،
+    مبلغًا وقدره: <span class="field"></span> (فقط <span class="field"></span> لا غير)،
+    وذلك في تاريخ استحقاق أقصاه: <span class="field"></span>.
+  </p>
+
+  <p>
+    وهذا السند مستحق الأداء بمجرد الاطلاع/في التاريخ المحدد أعلاه دون الحاجة إلى إنذار،
+    ويسري عليه نظام الأوراق التجارية المعمول به في المملكة العربية السعودية،
+    ويُعدّ سندًا تنفيذيًا وفقًا لنظام التنفيذ.
+  </p>
+
+  <p>الغرض من السند: <span class="field"></span></p>
+
+  <div class="sign">
+    <div>توقيع المُحرِّر (المدين)</div>
+    <div>توقيع الشاهد (اختياري)</div>
+  </div>
+
+  <p class="note">
+    تنويه: هذا النموذج استرشادي لتسهيل التعبئة فقط، ولا يُعد استشارة قانونية.
+    يُنصح بمراجعة محامٍ مرخّص قبل التوقيع، ويُفضّل تصديقه من كاتب العدل أو الجهة المختصة.
+  </p>
+</body>
+</html>

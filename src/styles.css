@@ -1,0 +1,503 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* ============================================================
+     IDEA BUSINESS — Fresh SaaS palette (light, airy, teal+lime)
+     Inspired by the IDEA BUSINESS tree logo: cyan→teal gradient
+     with a citrus-lime accent for highlights and calls-to-action.
+     ============================================================ */
+  --radius: 0.75rem;
+
+  --background: oklch(0.985 0.005 200);              /* near-white with cool tint */
+  --foreground: oklch(0.22 0.04 235);                /* deep ink-blue text */
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.04 235);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.04 235);
+
+  --primary: oklch(0.68 0.14 210);                   /* brand cyan-teal */
+  --primary-foreground: oklch(0.99 0.005 200);
+
+  --secondary: oklch(0.96 0.02 200);                 /* pale cyan surface */
+  --secondary-foreground: oklch(0.28 0.05 230);
+
+  --muted: oklch(0.965 0.012 220);
+  --muted-foreground: oklch(0.50 0.03 230);
+
+  --accent: oklch(0.88 0.16 130);                    /* fresh lime accent */
+  --accent-foreground: oklch(0.22 0.06 130);
+
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.92 0.015 220);
+  --input: oklch(0.94 0.012 220);
+  --ring: oklch(0.68 0.14 210 / 60%);
+
+  --chart-1: oklch(0.68 0.14 210);                   /* cyan */
+  --chart-2: oklch(0.78 0.14 175);                   /* teal */
+  --chart-3: oklch(0.82 0.16 135);                   /* lime */
+  --chart-4: oklch(0.85 0.13 90);                    /* warm yellow */
+  --chart-5: oklch(0.55 0.18 260);                   /* electric blue */
+
+  --sidebar: oklch(0.99 0.005 210);
+  --sidebar-foreground: oklch(0.22 0.04 235);
+  --sidebar-primary: oklch(0.68 0.14 210);
+  --sidebar-primary-foreground: oklch(0.99 0.005 200);
+  --sidebar-accent: oklch(0.96 0.02 200);
+  --sidebar-accent-foreground: oklch(0.28 0.05 230);
+  --sidebar-border: oklch(0.92 0.015 220);
+  --sidebar-ring: oklch(0.68 0.14 210 / 50%);
+}
+
+.dark {
+  /* Optional dark variant — keeps the cyan/lime accents on deep teal-navy */
+  --background: oklch(0.18 0.035 235);
+  --foreground: oklch(0.96 0.008 200);
+  --card: oklch(0.22 0.04 230);
+  --card-foreground: oklch(0.96 0.008 200);
+  --popover: oklch(0.22 0.04 230);
+  --popover-foreground: oklch(0.96 0.008 200);
+  --primary: oklch(0.78 0.14 200);
+  --primary-foreground: oklch(0.18 0.04 235);
+  --secondary: oklch(0.27 0.04 230);
+  --secondary-foreground: oklch(0.96 0.008 200);
+  --muted: oklch(0.25 0.035 230);
+  --muted-foreground: oklch(0.72 0.02 220);
+  --accent: oklch(0.85 0.18 135);
+  --accent-foreground: oklch(0.18 0.06 130);
+  --destructive: oklch(0.60 0.20 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.78 0.14 200 / 60%);
+  --chart-1: oklch(0.78 0.14 200);
+  --chart-2: oklch(0.78 0.14 175);
+  --chart-3: oklch(0.82 0.16 135);
+  --chart-4: oklch(0.85 0.13 90);
+  --chart-5: oklch(0.65 0.18 260);
+  --sidebar: oklch(0.20 0.04 235);
+  --sidebar-foreground: oklch(0.96 0.008 200);
+  --sidebar-primary: oklch(0.78 0.14 200);
+  --sidebar-primary-foreground: oklch(0.18 0.04 235);
+  --sidebar-accent: oklch(0.25 0.035 230);
+  --sidebar-accent-foreground: oklch(0.96 0.008 200);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.78 0.14 200 / 50%);
+}
+
+/* ============================
+   IDEA BUSINESS — Brand tokens
+   ============================ */
+@theme inline {
+  --color-ib-deep: var(--ib-deep);
+  --color-ib-navy: var(--ib-navy);
+  --color-ib-surface: var(--ib-surface);
+  --color-ib-cyan: var(--ib-cyan);
+  --color-ib-cyan-soft: var(--ib-cyan-soft);
+  --color-ib-neon: var(--ib-neon);
+  --color-ib-silver: var(--ib-silver);
+}
+:root {
+  /* Brand tokens: fresh SaaS — cyan→teal logo with lime accent */
+  --ib-deep: oklch(0.30 0.10 220);          /* deep teal-blue */
+  --ib-navy: oklch(0.45 0.13 215);          /* mid brand blue */
+  --ib-surface: oklch(0.97 0.015 210);      /* pale cyan card */
+  --ib-cyan: oklch(0.72 0.14 200);          /* brand cyan */
+  --ib-cyan-soft: oklch(0.88 0.07 195);     /* soft cyan tint */
+  --ib-neon: oklch(0.86 0.17 135);          /* lime accent */
+  --ib-silver: oklch(0.78 0.012 220);
+
+  --ib-gold: var(--ib-neon);
+  --ib-gold-soft: oklch(0.92 0.10 130);
+  --ib-steel: var(--ib-cyan);
+  --ib-ivory: oklch(0.98 0.005 200);
+
+  --ib-grad-hero: linear-gradient(180deg, oklch(0.98 0.01 200) 0%, oklch(0.94 0.03 200) 60%, oklch(0.88 0.05 195) 100%);
+  --ib-grad-cyan: linear-gradient(135deg, var(--ib-cyan), oklch(0.55 0.14 215));
+  --ib-grad-neon: linear-gradient(135deg, var(--ib-neon), oklch(0.78 0.18 145));
+  --ib-glow-cyan: 0 1px 0 oklch(1 0 0 / 0.6), 0 10px 30px oklch(0.55 0.14 215 / 0.18);
+  --ib-glow-neon: 0 0 0 1px var(--ib-neon) inset, 0 10px 28px oklch(0.86 0.17 135 / 0.30);
+}
+
+@utility ib-circuit-bg {
+  background-color: var(--ib-deep);
+  background-image:
+    radial-gradient(900px 500px at 50% -10%, oklch(0.24 0.05 250 / 0.55), transparent 65%),
+    linear-gradient(to right, oklch(1 0 0 / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.025) 1px, transparent 1px);
+  background-size: auto, 64px 64px, 64px 64px;
+}
+
+@utility ib-glass {
+  background: linear-gradient(180deg, oklch(0.23 0.04 255 / 0.85), oklch(0.18 0.035 255 / 0.85));
+  border: 1px solid oklch(1 0 0 / 0.08);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.04), 0 12px 36px oklch(0 0 0 / 0.45);
+}
+
+@utility ib-glow-cyan { box-shadow: var(--ib-glow-cyan); }
+@utility ib-glow-neon { box-shadow: var(--ib-glow-neon); }
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html, body {
+    font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Noto Naskh Arabic', 'Libre Baskerville', 'IBM Plex Serif', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .font-mono, code, pre, kbd, samp {
+    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+}
+
+
+/* === AI Splash Screen Animations === */
+@keyframes splash-pop {
+  0%   { opacity: 0; transform: scale(0.4) translateY(40px) rotate(-8deg); filter: blur(12px); }
+  60%  { opacity: 1; transform: scale(1.08) translateY(-6px) rotate(2deg); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); filter: blur(0); }
+}
+@keyframes splash-float-y {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+@keyframes splash-orbit { to { transform: rotate(360deg); } }
+@keyframes splash-orbit-rev { to { transform: rotate(-360deg); } }
+@keyframes splash-pulse-glow {
+  0%,100% { opacity: 0.55; transform: scale(1); }
+  50%     { opacity: 1;    transform: scale(1.15); }
+}
+@keyframes splash-scan {
+  0%   { transform: translateY(-110%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(110%); opacity: 0; }
+}
+@keyframes splash-particle {
+  0%   { opacity: 0; transform: translate(0,0) scale(0.4); }
+  30%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx,40px), var(--ty,-60px)) scale(1.2); }
+}
+@keyframes splash-text-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes splash-progress {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+
+.splash-pop       { animation: splash-pop 900ms cubic-bezier(.2,.9,.2,1.1) both; }
+.splash-float-y   { animation: splash-float-y 3.2s ease-in-out infinite; }
+.splash-orbit     { animation: splash-orbit 12s linear infinite; }
+.splash-orbit-rev { animation: splash-orbit-rev 16s linear infinite; }
+.splash-pulse-glow{ animation: splash-pulse-glow 2.4s ease-in-out infinite; }
+.splash-scan      { animation: splash-scan 2.2s ease-in-out infinite; }
+.splash-shimmer-text {
+  background: linear-gradient(90deg,
+    oklch(0.85 0.05 220) 0%,
+    oklch(0.96 0.12 200) 45%,
+    oklch(0.75 0.18 260) 55%,
+    oklch(0.85 0.05 220) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: splash-text-shimmer 2.6s linear infinite;
+}
+.splash-progress-bar { animation: splash-progress 1.6s ease-out forwards; }
+
+/* === Global AI Ambient Effects === */
+@keyframes ai-orb-drift {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(40px,-30px) scale(1.08); }
+  66%     { transform: translate(-30px,40px) scale(0.95); }
+}
+@keyframes ai-grid-pan {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 44px 44px, 44px 44px; }
+}
+@keyframes ai-beam {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 0.8; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+@keyframes ai-dot-pulse {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50%     { opacity: 1;   transform: scale(1.4); }
+}
+
+.ai-backdrop {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.ai-backdrop::before,
+.ai-backdrop::after {
+  content: ""; position: absolute; border-radius: 9999px;
+  filter: blur(100px); opacity: 0.12;
+}
+.ai-backdrop::before {
+  width: 520px; height: 520px; top: -160px; left: -160px;
+  background: radial-gradient(circle, oklch(0.78 0.12 78) 0%, transparent 70%);
+}
+.ai-backdrop::after {
+  width: 600px; height: 600px; bottom: -220px; right: -200px;
+  background: radial-gradient(circle, oklch(0.42 0.10 255) 0%, transparent 70%);
+}
+.ai-grid-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
+  background-image:
+    linear-gradient(oklch(1 0 0) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(1 0 0) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+@utility ai-card {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--color-card) 96%, transparent),
+    color-mix(in oklab, var(--color-card) 92%, transparent));
+  border: 1px solid oklch(1 0 0 / 0.06);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.03),
+    0 1px 2px oklch(0 0 0 / 0.30),
+    0 12px 32px -16px oklch(0 0 0 / 0.55);
+  backdrop-filter: blur(8px);
+}
+@utility ai-glow-text {
+  background: linear-gradient(180deg, oklch(0.96 0.008 90) 0%, oklch(0.78 0.12 78) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  font-family: 'Noto Naskh Arabic', 'Libre Baskerville', Georgia, serif;
+  letter-spacing: -0.015em;
+}
+@utility ai-dot {
+  display: inline-block; width: 0.4rem; height: 0.4rem; border-radius: 9999px;
+  background: oklch(0.78 0.12 78);
+  box-shadow: 0 0 0 2px oklch(0.78 0.12 78 / 0.20);
+  animation: ai-dot-pulse 2.4s ease-in-out infinite;
+}
+@utility ai-beam-line {
+  position: relative; overflow: hidden;
+}
+.ai-beam-line::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.12 78 / 0.15), transparent);
+  animation: ai-beam 6s ease-in-out infinite;
+}
+
+/* === Avatar verification rings & badges === */
+.avatar-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding: 2px;
+  background: var(--background);
+}
+.avatar-container.verified {
+  padding: 2px;
+  background: conic-gradient(from 0deg, #16a34a, #22c55e, #4ade80, #16a34a);
+  box-shadow: 0 0 0 2px var(--background), 0 0 10px rgba(34,197,94,.45);
+  animation: ring-pulse 3s ease-in-out infinite;
+}
+.avatar-container.premium {
+  padding: 2px;
+  background: conic-gradient(from 0deg, #1d4ed8, #3b82f6, #60a5fa, #1d4ed8);
+  box-shadow: 0 0 0 2px var(--background), 0 0 10px rgba(59,130,246,.45);
+}
+.avatar-container.verified.premium {
+  background: conic-gradient(from 0deg, #16a34a 0%, #22c55e 35%, #3b82f6 65%, #1d4ed8 100%);
+}
+@keyframes ring-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--background), 0 0 8px rgba(34,197,94,.35); }
+  50%      { box-shadow: 0 0 0 2px var(--background), 0 0 16px rgba(34,197,94,.7); }
+}
+.verified-check-blue {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 9999px;
+  background: #1d9bf0; color: #fff;
+}
+
+/* Accessibility — visible focus rings on keyboard nav (#16) */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+/* Tabular numerals for stats/counters */
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* Smoother scroll */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+/* Live ticker marquee */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-track {
+  animation: ticker-scroll 45s linear infinite;
+  will-change: transform;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.7); }
+}
+.pulse-dot { animation: pulse-dot 1.4s ease-in-out infinite; }
+
+/* === Production polish: refined motion, surfaces & interaction === */
+@keyframes ib-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ib-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.ib-fade-up { animation: ib-fade-up 600ms cubic-bezier(.2,.7,.2,1) both; }
+.ib-skeleton {
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--muted) 80%, transparent),
+    color-mix(in oklab, var(--muted) 50%, transparent),
+    color-mix(in oklab, var(--muted) 80%, transparent));
+  background-size: 200% 100%;
+  animation: ib-shimmer 1.6s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* Refined card hover */
+.ib-card-hover {
+  transition: transform 240ms cubic-bezier(.2,.7,.2,1),
+              box-shadow 240ms cubic-bezier(.2,.7,.2,1),
+              border-color 240ms ease;
+}
+.ib-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--ib-gold) 50%, transparent);
+  box-shadow: 0 10px 30px -12px oklch(0 0 0 / 0.55),
+              inset 0 1px 0 oklch(1 0 0 / 0.05);
+}
+
+/* Premium button shine on hover */
+.ib-btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.ib-btn-shine::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%,
+    color-mix(in oklab, var(--ib-gold) 30%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 700ms ease;
+  pointer-events: none;
+}
+.ib-btn-shine:hover::before { transform: translateX(120%); }
+
+/* Selection */
+::selection {
+  background: color-mix(in oklab, var(--ib-gold) 45%, transparent);
+  color: var(--ib-deep);
+}
+
+/* Scrollbar — slim, brand-aware */
+@media (pointer: fine) {
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--ib-gold) 35%, transparent);
+    border-radius: 8px; border: 2px solid transparent; background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--ib-gold) 60%, transparent);
+    background-clip: padding-box;
+  }
+}
+
+
+

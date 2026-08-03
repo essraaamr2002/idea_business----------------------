@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS guarantees_owner_admin_read ON public.project_guarantees;

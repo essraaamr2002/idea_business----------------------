@@ -1,0 +1,1 @@
+CREATE POLICY "supervisor_subscriptions_admin_read" ON public.supervisor_subscriptions FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'moderator'));

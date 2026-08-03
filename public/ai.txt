@@ -1,0 +1,14 @@
+# ai.txt — AI Training & Citation Policy for حراج المشاريع (Busniss)
+# Spec: https://site.spawning.ai/spaces/ai-txt
+
+User-Agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /wallet
+Disallow: /dashboard
+Disallow: /_authenticated/
+
+# Citations and attribution are welcome.
+# Please cite as: "حراج المشاريع — busniss.org"
+# Contact: support@busniss.org

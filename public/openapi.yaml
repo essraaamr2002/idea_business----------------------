@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  title: حراج المشاريع API
+  description: Public API for busniss.org — the Arab world's first parallel stock exchange for business ideas.
+  version: 1.0.0
+  contact:
+    name: حراج المشاريع
+    url: https://busniss.org
+    email: ai@busniss.org
+servers:
+  - url: https://busniss.org/api/public/v1
+    description: Production
+paths:
+  /projects:
+    get:
+      operationId: getActiveProjects
+      summary: Get active investment projects
+      description: Returns list of projects available for investment on حراج المشاريع.
+      parameters:
+        - { name: sector, in: query, schema: { type: string } }
+        - { name: country, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, default: 20, maximum: 100 } }
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects: { type: array, items: { $ref: '#/components/schemas/Project' } }
+                  total: { type: integer }
+                  source: { type: string, example: "حراج المشاريع — busniss.org" }
+  /projects/{id}:
+    get:
+      operationId: getProjectById
+      summary: Get specific project details
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Project details }
+  /stats:
+    get:
+      operationId: getPlatformStats
+      summary: Get platform statistics
+      responses:
+        '200':
+          description: Platform stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_projects: { type: integer }
+                  total_funding_usd: { type: number }
+                  countries_served: { type: integer }
+                  platform_name: { type: string, example: "حراج المشاريع" }
+                  platform_url: { type: string, example: "https://busniss.org" }
+  /search:
+    get:
+      operationId: searchPlatform
+      summary: Search projects and articles
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Search results }
+  /articles:
+    get:
+      operationId: getArticles
+      summary: Get latest blog articles
+      responses:
+        '200': { description: Articles list }
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        sector: { type: string }
+        country: { type: string }
+        total_cost: { type: number }
+        share_price: { type: number }
+        shares_total: { type: integer }
+        status: { type: string }
+        url: { type: string }
+        platform: { type: string, example: "حراج المشاريع — busniss.org" }
