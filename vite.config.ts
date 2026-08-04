@@ -10,7 +10,12 @@ Object.assign(process.env, serverEnv);
 const isVercel = process.env.VERCEL === "1" || process.env.VERCEL === "true";
 
 export default defineConfig({
-  nitro: isVercel ? { preset: "vercel" } : undefined,
+  nitro: isVercel
+    ? {
+        preset: "vercel",
+        noExternals: ["tslib"],
+      }
+    : undefined,
   tanstackStart: {
     server: { entry: "server" },
   },

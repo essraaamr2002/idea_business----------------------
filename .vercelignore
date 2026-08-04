@@ -1,0 +1,20 @@
+# Ignore local development artifacts from the project root only.
+/node_modules
+/dist
+/dist-ssr
+/.output
+/.vinxi
+/.tanstack
+/.nitro
+
+# Wrangler / Cloudflare
+/.wrangler
+/.dev.vars
+
+# Environment files / secrets
+/.env
+/.env.*
+!/.env.example
+
+# Private assets must never be deployed publicly
+/private-assets
