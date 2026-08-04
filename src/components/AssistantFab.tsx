@@ -35,9 +35,9 @@ export function AssistantFab() {
   if (pathname.startsWith("/assistant") || pathname.startsWith("/auth")) return null;
 
   return (
-    <div className="fixed z-50 bottom-24 md:bottom-6 end-4 flex flex-col items-end gap-2">
+    <div className="fixed z-50 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] end-3 flex max-w-[calc(100vw-1.5rem)] flex-col items-end gap-2 sm:end-4 md:bottom-6">
       {showTeaser && (
-        <div className="relative max-w-xs rounded-2xl border border-primary/30 bg-card/95 p-3 pe-8 text-xs shadow-xl backdrop-blur animate-in fade-in slide-in-from-bottom-2">
+        <div className="relative max-w-[calc(100vw-1.5rem)] rounded-2xl border border-primary/30 bg-card/95 p-3 pe-8 text-xs shadow-xl backdrop-blur animate-in fade-in slide-in-from-bottom-2 sm:max-w-xs">
           <button type="button" onClick={dismissTeaser} aria-label={lang === "ar" ? "إغلاق" : "Close"} className="absolute top-1.5 end-1.5 rounded-full p-1 text-muted-foreground hover:bg-muted">
             <X className="h-3 w-3" />
           </button>
@@ -54,7 +54,7 @@ export function AssistantFab() {
       <Link
         to={user ? "/assistant" : "/auth"}
         aria-label={user ? label : signInLabel}
-        className="relative group flex items-center gap-2 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 hover:shadow-primary/60 transition-all px-4 py-3 hover:scale-105"
+        className="relative group flex max-w-full items-center gap-2 rounded-full bg-primary px-4 py-3 text-primary-foreground shadow-lg shadow-primary/40 transition-all hover:scale-105 hover:shadow-primary/60"
         onClick={() => {
           dismissTeaser();
           reportClientEvent({ source: "assistant-fab", action: "click", ok: true, context: { authed: !!user } });

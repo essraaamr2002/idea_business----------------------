@@ -206,6 +206,24 @@
     border-color: var(--color-border);
   }
 
+  html {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body,
+  #root,
+  main,
+  section,
+  article,
+  aside,
+  header,
+  footer,
+  nav,
+  div {
+    min-width: 0;
+  }
+
   html, body {
     font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'ss01', 'cv11';
@@ -216,6 +234,34 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  a,
+  button {
+    overflow-wrap: anywhere;
   }
 
   h1, h2, h3, h4, .font-serif {
@@ -226,6 +272,17 @@
 
   .font-mono, code, pre, kbd, samp {
     font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+}
+
+@layer utilities {
+  .ib-responsive-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ib-safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
 
@@ -498,6 +555,5 @@ html { scroll-behavior: smooth; }
     background-clip: padding-box;
   }
 }
-
 
 

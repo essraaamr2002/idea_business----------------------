@@ -34,7 +34,7 @@ export function PageHeader({ kicker, title, subtitle, icon, actions }: PageHeade
         }}
       />
 
-      <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:flex sm:flex-wrap sm:justify-between">
+      <div className="relative flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
         <div className="min-w-0">
           {kicker && (
             <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary backdrop-blur-sm">
@@ -52,7 +52,7 @@ export function PageHeader({ kicker, title, subtitle, icon, actions }: PageHeade
             </p>
           )}
         </div>
-        {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+        {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0">{actions}</div>}
       </div>
     </header>
   );

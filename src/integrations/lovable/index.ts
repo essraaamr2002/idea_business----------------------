@@ -17,9 +17,10 @@ export const lovable = {
     ) => {
       const result = await lovableAuth.signInWithOAuth(provider, {
         redirect_uri:
-          typeof window !== "undefined"
-            ? `${window.location.origin}/auth/callback`
-            : opts?.redirect_uri,
+          opts?.redirect_uri ??
+          (typeof window !== "undefined"
+            ? window.location.origin
+            : undefined),
         extraParams: {
           ...opts?.extraParams,
         },
@@ -33,10 +34,12 @@ export const lovable = {
         return result;
       }
 
-      try {
-        await supabase.auth.setSession(result.tokens);
-      } catch (e) {
-        return { error: e instanceof Error ? e : new Error(String(e)) };
+      if (result.tokens) {
+        try {
+          await supabase.auth.setSession(result.tokens);
+        } catch (e) {
+          return { error: e instanceof Error ? e : new Error(String(e)) };
+        }
       }
       return result;
     },

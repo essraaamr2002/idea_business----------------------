@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PageState } from "@/components/PageState";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/marketplace")({
   head: () => ({
@@ -28,8 +30,10 @@ function MarketplacePage() {
   const [country, setCountry] = useState<string>("all");
   const [view, setView] = useState<ViewMode>("grid");
   const [sort, setSort] = useState<string>("recent");
+  const { dir, lang } = useI18n();
+  const isEn = lang === "en";
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["marketplace-projects"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -59,7 +63,7 @@ function MarketplacePage() {
   const countries = Array.from(new Set((data ?? []).map((p: any) => p.country).filter(Boolean)));
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={dir}>
       <main className="mx-auto max-w-7xl px-4 py-8 space-y-6">
         <PageHeader title="السوق المطوّر" subtitle="استكشف المشاريع بطرق متعددة" icon={<ShoppingCart className="h-6 w-6" />} />
 
@@ -98,22 +102,35 @@ function MarketplacePage() {
           </div>
         </div>
 
-        {isLoading && <p className="text-center text-muted-foreground py-12">جارٍ التحميل...</p>}
-        {!isLoading && filtered.length === 0 && <p className="text-center text-muted-foreground py-12">لا توجد مشاريع مطابقة.</p>}
-
-        {view === "grid" && (
+        {isLoading ? (
+          <PageState kind="loading" />
+        ) : isError ? (
+          <PageState
+            kind="error"
+            description={(error as Error)?.message}
+            onAction={() => refetch()}
+          />
+        ) : filtered.length === 0 ? (
+          <PageState
+            kind="empty"
+            title={isEn ? "No matching projects" : "لا توجد مشاريع مطابقة"}
+            description={isEn ? "Change the filters or clear them to see all available projects." : "غيّر الفلاتر أو امسحها لعرض كل المشاريع المتاحة."}
+            actionLabel={isEn ? "Clear filters" : "مسح الفلاتر"}
+            onAction={() => { setQ(""); setSector("all"); setCountry("all"); setSort("recent"); }}
+          />
+        ) : view === "grid" && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p: any) => <GridCard key={p.id} project={p} />)}
           </div>
         )}
 
-        {view === "list" && (
+        {!isLoading && !isError && filtered.length > 0 && view === "list" && (
           <div className="space-y-2">
             {filtered.map((p: any) => <ListRow key={p.id} project={p} />)}
           </div>
         )}
 
-        {view === "map" && <MapView projects={filtered} />}
+        {!isLoading && !isError && filtered.length > 0 && view === "map" && <MapView projects={filtered} />}
       </main>
     </div>
   );

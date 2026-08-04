@@ -329,7 +329,7 @@ function RootComponent() {
                 <SplashScreen />
                 <MarketingPixels />
                 <TopNav />
-                <div id="main-content" className="pb-16 md:pb-0">
+                <div id="main-content" className="min-w-0 overflow-x-clip pb-20 md:pb-0">
                   <Outlet />
                 </div>
                 <Footer />

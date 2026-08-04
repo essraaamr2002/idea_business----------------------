@@ -37,7 +37,7 @@ export function DiagnosticsButton() {
         <button
           onClick={openCollect}
           aria-label="جمع وإرسال تقرير أخطاء"
-          className="fixed bottom-24 left-4 z-[90] flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur hover:bg-primary hover:text-primary-foreground transition"
+          className="fixed bottom-[calc(9.5rem+env(safe-area-inset-bottom))] start-3 z-[90] flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:bottom-24 md:start-4"
           title="تقرير أخطاء"
         >
           <Bug className="h-5 w-5" />

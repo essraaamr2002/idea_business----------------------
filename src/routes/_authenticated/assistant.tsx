@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Loader2, Wrench, ChevronDown, Trash2, Sparkles, User, FolderPlus, ShieldCheck, Wallet, Rocket, RefreshCw, AlertTriangle } from "lucide-react";
 import { reportClientEvent } from "@/lib/client-telemetry";
+import { PageState } from "@/components/PageState";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/assistant")({
   component: AssistantPage,
@@ -35,6 +37,8 @@ const ACTION_CARDS: { icon: any; label: string; prompt: string; suggested: Agent
 ];
 
 function AssistantPage() {
+  const { lang, dir } = useI18n();
+  const isEn = lang === "en";
   const [agentChoice, setAgentChoice] = useState<AgentChoice>("auto");
   const [resolvedAgent, setResolvedAgent] = useState<AgentId>("commander");
   const [token, setToken] = useState<string | null>(null);
@@ -47,7 +51,15 @@ function AssistantPage() {
   }, []);
 
   if (!token) {
-    return <div className="p-8 text-center text-sm text-muted-foreground" dir="rtl">جاري تجهيز جلستك…</div>;
+    return (
+      <main className="mx-auto max-w-3xl p-6" dir={dir}>
+        <PageState
+          kind="loading"
+          title={isEn ? "Preparing your assistant session" : "جارٍ تجهيز جلسة المساعد"}
+          description={isEn ? "We are checking your secure session before opening the chat." : "نراجع جلستك الآمنة قبل فتح المحادثة."}
+        />
+      </main>
+    );
   }
   return (
     <ChatSurface

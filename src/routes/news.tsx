@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles, Mail, ArrowLeft, Radio, Newspaper, BookOpen, Megaphone, Gavel, Repeat, Rocket } from "lucide-react";
 import { toast } from "sonner";
+import { PageState } from "@/components/PageState";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/news")({
   head: () => ({
@@ -50,15 +52,17 @@ function timeAgo(iso: string) {
 function NewsPage() {
   const qc = useQueryClient();
   const subscribe = useServerFn(subscribeNewsPublic);
+  const { lang, dir } = useI18n();
+  const isEn = lang === "en";
   const [email, setEmail] = useState("");
 
-  const { data: liveItems, isLoading: liveLoading } = useQuery({
+  const { data: liveItems, isLoading: liveLoading, isError: liveIsError, error: liveError, refetch: refetchLive } = useQuery({
     queryKey: ["news", "live"],
     queryFn: () => listArticles({ data: { limit: 60, categories: LIVE_CATEGORIES } }),
     refetchInterval: 30_000,
   });
 
-  const { data: newsItems, isLoading: newsLoading } = useQuery({
+  const { data: newsItems, isLoading: newsLoading, isError: newsIsError, error: newsError, refetch: refetchNews } = useQuery({
     queryKey: ["news", "feed"],
     queryFn: () => listArticles({ data: { limit: 30, categories: NEWS_CATEGORIES } }),
   });
@@ -90,7 +94,7 @@ function NewsPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8" dir="rtl">
+    <div className="container mx-auto max-w-5xl px-4 py-8" dir={dir}>
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 mb-3">
           <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" /></span>
@@ -119,9 +123,25 @@ function NewsPage() {
 
         <TabsContent value="live" className="mt-4">
           {liveLoading ? (
-            <div className="text-center py-12 text-muted-foreground">جاري التحميل...</div>
+            <PageState
+              kind="loading"
+              title={isEn ? "Loading live updates" : "جارٍ تحميل البث المباشر"}
+              description={isEn ? "New platform events will appear here." : "ستظهر أحداث المنصة الجديدة هنا."}
+            />
+          ) : liveIsError ? (
+            <PageState
+              kind="error"
+              title={isEn ? "Live updates could not load" : "تعذّر تحميل البث المباشر"}
+              description={(liveError as Error)?.message || (isEn ? "Try again in a moment." : "حاول مرة أخرى بعد لحظات.")}
+              actionLabel={isEn ? "Reload updates" : "إعادة تحميل الأحداث"}
+              onAction={() => refetchLive()}
+            />
           ) : !liveItems?.length ? (
-            <div className="text-center py-12 text-muted-foreground">لا توجد أحداث بعد. عند أول مشروع/مزايدة/إعلان ستظهر هنا فوراً.</div>
+            <PageState
+              kind="empty"
+              title={isEn ? "No live events yet" : "لا توجد أحداث مباشرة بعد"}
+              description={isEn ? "Projects, bids, deals, and announcements will appear here as soon as they happen." : "ستظهر المشاريع والمزايدات والصفقات والإعلانات هنا فور حدوثها."}
+            />
           ) : (
             <ol className="relative border-r-2 border-border pr-6 space-y-4">
               {liveItems.map((a: any) => (
@@ -145,9 +165,25 @@ function NewsPage() {
 
         <TabsContent value="news" className="mt-4">
           {newsLoading ? (
-            <div className="text-center py-12 text-muted-foreground">جاري التحميل...</div>
+            <PageState
+              kind="loading"
+              title={isEn ? "Loading news" : "جارٍ تحميل الأخبار"}
+              description={isEn ? "Preparing the latest edited updates." : "نجهّز آخر الأخبار المحررة."}
+            />
+          ) : newsIsError ? (
+            <PageState
+              kind="error"
+              title={isEn ? "News could not load" : "تعذّر تحميل الأخبار"}
+              description={(newsError as Error)?.message || (isEn ? "Try again in a moment." : "حاول مرة أخرى بعد لحظات.")}
+              actionLabel={isEn ? "Reload news" : "إعادة تحميل الأخبار"}
+              onAction={() => refetchNews()}
+            />
           ) : !newsItems?.length ? (
-            <div className="text-center py-12 text-muted-foreground">لا توجد أخبار محرّرة بعد.</div>
+            <PageState
+              kind="empty"
+              title={isEn ? "No edited news yet" : "لا توجد أخبار محررة بعد"}
+              description={isEn ? "Published news and announcements will appear here." : "ستظهر الأخبار والإعلانات المنشورة هنا."}
+            />
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {newsItems.map((a: any) => (

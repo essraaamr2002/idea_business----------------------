@@ -95,13 +95,13 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md" dir={dir}>
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-4 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2 lg:gap-6">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-3 sm:px-4">
+        <div className="flex min-w-0 items-center gap-2 xl:gap-5">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <button
                 aria-label={t("nav.menu")}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border md:hidden"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border xl:hidden"
               >
                 <Menu className="h-4 w-4" />
               </button>
@@ -144,15 +144,15 @@ export function TopNav() {
           </Sheet>
 
           <Link to="/" className="flex shrink-0 items-center" aria-label="IDEA BUSINESS">
-            <span className="md:hidden">
+            <span className="xl:hidden">
               <BrandLogo size={52} parallax />
             </span>
-            <span className="hidden md:inline-flex">
-              <BrandLogo size={72} withWordmark orientation="horizontal" parallax />
+            <span className="hidden xl:inline-flex">
+              <BrandLogo size={68} withWordmark orientation="horizontal" parallax />
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex">
+          <nav className="hidden items-center gap-1 xl:flex">
             {primaryLinks.filter((l) => !l.auth || user).map((l) => (
               <NavItem key={l.to} to={l.to} label={l.label} exact={l.exact} />
             ))}
@@ -173,7 +173,7 @@ export function TopNav() {
           </nav>
         </div>
 
-        <div className="hidden flex-1 max-w-md xl:block">
+        <div className="hidden min-w-0 flex-1 max-w-sm 2xl:block">
           <div className="relative">
             <Search className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -187,7 +187,7 @@ export function TopNav() {
           <Link
             to="/projects/new"
             search={{ edit: undefined }}
-            className="hidden md:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-soft hover:opacity-90"
+            className="hidden lg:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-soft hover:opacity-90"
           >
             <Plus className="h-3.5 w-3.5" /> {t("nav.newProject")}
           </Link>
@@ -208,7 +208,7 @@ export function TopNav() {
             <DropdownMenuTrigger asChild>
               <button
                 aria-label={t("nav.settings")}
-                className="hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted"
+                className="hidden lg:flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted"
               >
                 <Settings2 className="h-4 w-4" />
               </button>
@@ -235,7 +235,7 @@ export function TopNav() {
             <Link
               to="/verify"
               title={t("verify.promptTitle")}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-extrabold text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 transition"
+              className="hidden 2xl:inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-extrabold text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 transition"
             >
               <ShieldAlert className="h-3.5 w-3.5" />
               {t("verify.prompt")}
@@ -245,7 +245,7 @@ export function TopNav() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-10 items-center gap-2 rounded-full border border-border ps-1 pe-2.5 text-xs font-bold transition hover:bg-muted max-w-[200px]">
+                <button className="flex h-10 max-w-[150px] items-center gap-2 rounded-full border border-border ps-1 pe-2.5 text-xs font-bold transition hover:bg-muted sm:max-w-[190px]">
                   <AvatarRing
                     src={me?.avatar_url}
                     alt={me?.display_name ?? user.email ?? "?"}

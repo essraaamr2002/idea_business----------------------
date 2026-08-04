@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Mail, Lock, User, Eye, EyeOff, Check, Shield } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Check, Shield, Info } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SecurityStrip } from "@/components/SecurityBadges";
 
@@ -41,6 +41,11 @@ function friendlyAuthError(error: unknown) {
   return message || "تعذر تنفيذ عملية المصادقة. تحقق من البيانات وحاول مرة أخرى.";
 }
 
+function isLocalhost() {
+  if (typeof window === "undefined") return false;
+  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
+}
+
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -55,6 +60,7 @@ function AuthPage() {
   const { user } = useAuth();
   const nav = useNavigate();
   const [tab, setTab] = useState<"login" | "register" | "staff">("login");
+  const localAuth = isLocalhost();
 
   // Capture ?ref=CODE on landing and persist for claim after sign-up/sign-in
   useEffect(() => {
@@ -81,13 +87,13 @@ function AuthPage() {
   }, [user, nav]);
 
   return (
-    <div dir="rtl" className="grid min-h-screen lg:grid-cols-2">
+    <div dir="rtl" className="grid min-h-[calc(100vh-3.5rem)] bg-[#f4f8fb] lg:min-h-[calc(100vh-72px)] lg:grid-cols-[minmax(0,1fr)_minmax(420px,0.95fr)]">
       {/* ── VISUAL SIDE ── */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-primary-dark via-primary to-[#2E6FBE] p-12 lg:flex lg:flex-col lg:justify-center">
+      <aside className="relative hidden overflow-hidden bg-[#063044] p-8 lg:flex lg:flex-col lg:justify-center xl:p-12">
         {/* orbs + grid */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-orange/15 blur-3xl" />
-          <div className="absolute -bottom-32 -left-20 h-[350px] w-[350px] rounded-full bg-green-verified/10 blur-3xl" />
+          <div className="absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-cyan-400/20 blur-3xl" />
+          <div className="absolute -bottom-32 -left-20 h-[350px] w-[350px] rounded-full bg-emerald-400/10 blur-3xl" />
           <div
             className="absolute inset-0 opacity-40"
             style={{
@@ -99,24 +105,24 @@ function AuthPage() {
         </div>
 
         <div className="relative z-10 max-w-md">
-          <Link to="/" className="mb-12 flex items-center gap-4">
+          <Link to="/" className="mb-10 flex items-center gap-4">
             <div className="rounded-2xl bg-white p-2 shadow-2xl">
-              <BrandLogo size={160} />
+              <BrandLogo size={104} />
             </div>
             <div>
-              <div className="text-2xl font-black tracking-tight text-white">iDEA Business</div>
-              <div className="text-sm text-white/60">IDEA BUSINESS</div>
+              <div className="text-2xl font-black tracking-[0.18em] text-white">IDEA BUSINESS</div>
+              <div className="text-sm text-cyan-100/70">Secure investment platform</div>
             </div>
           </Link>
 
-          <h1 className="mb-4 text-4xl font-black leading-tight text-white md:text-5xl">
+          <h1 className="mb-4 max-w-lg text-4xl font-black leading-tight text-white md:text-5xl">
             حوّل <em className="not-italic text-orange">فكرتك</em>
             <br />
             إلى استثمار
             <br />
             مربح ومضمون
           </h1>
-          <p className="mb-10 max-w-sm text-base leading-relaxed text-white/60">
+          <p className="mb-10 max-w-md text-base leading-relaxed text-cyan-50/75">
             انضم للمنصة الاستثمارية العربية الأولى مع ضمانات قانونية وذكاء اصطناعي متكامل.
           </p>
 
@@ -129,8 +135,8 @@ function AuthPage() {
               "سوق داخلي لتداول الحصص",
               "محفظة مالية حقيقية متكاملة",
             ].map((f) => (
-              <li key={f} className="flex items-center gap-3 text-sm text-white/75">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-orange" />
+              <li key={f} className="flex items-center gap-3 text-sm font-semibold text-cyan-50/80">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300" />
                 {f}
               </li>
             ))}
@@ -139,22 +145,23 @@ function AuthPage() {
       </aside>
 
       {/* ── FORM SIDE ── */}
-      <main className="flex items-center justify-center bg-background p-6 lg:bg-white lg:p-10">
-        <div className="w-full max-w-md">
+      <main className="flex items-center justify-center p-4 sm:p-6 lg:p-10">
+        <div className="w-full max-w-md rounded-[28px] border border-cyan-100 bg-white/95 p-5 shadow-[0_24px_80px_rgba(6,48,68,0.12)] sm:p-7">
           {/* Mobile brand */}
-          <Link to="/" className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <BrandLogo size={140} />
-            <span className="text-xl font-black text-primary-dark">iDEA Business</span>
+          <Link to="/" className="mb-6 flex items-center justify-center gap-3 lg:hidden">
+            <BrandLogo size={92} />
+            <span className="text-xl font-black tracking-[0.16em] text-primary-dark">IDEA BUSINESS</span>
           </Link>
+          {localAuth && <LocalAuthNotice />}
           {/* Tabs */}
           {/* Tabs */}
-          <div className="mb-7 flex gap-1 rounded-2xl bg-muted p-1">
+          <div className="mb-7 grid grid-cols-3 gap-1 rounded-2xl bg-[#eef7fa] p-1">
             {(["login", "register", "staff"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`flex-1 rounded-xl py-2.5 text-xs font-extrabold transition sm:text-sm ${
-                  tab === t ? "bg-white text-primary-dark shadow-sm" : "text-muted-foreground"
+                className={`rounded-xl px-2 py-2.5 text-xs font-extrabold transition sm:text-sm ${
+                  tab === t ? "bg-primary text-primary-foreground shadow-sm" : "text-slate-600 hover:bg-white/70 hover:text-primary-dark"
                 }`}
               >
                 {t === "login" ? "تسجيل الدخول" : t === "register" ? "حساب جديد" : "دخول الموظفين"}
@@ -176,9 +183,9 @@ function AuthPage() {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <div className="flex gap-2.5">
-            <SocialButton provider="google" label="Google" />
-            <SocialButton provider="apple" label="Apple" />
+          <div className="grid grid-cols-2 gap-2.5">
+            <SocialButton provider="google" label="Google" disabled={localAuth} />
+            <SocialButton provider="apple" label="Apple" disabled={localAuth} />
           </div>
 
           <div className="mt-6">
@@ -197,6 +204,22 @@ function AuthPage() {
           </p>
         </div>
       </main>
+    </div>
+  );
+}
+
+function LocalAuthNotice() {
+  return (
+    <div className="mb-5 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-start text-sm text-slate-700">
+      <div className="flex items-start gap-2">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+        <div>
+          <div className="font-extrabold text-primary-dark">تسجيل الدخول المحلي</div>
+          <p className="mt-1 leading-relaxed">
+            على localhost استخدمي البريد وكلمة المرور. تسجيل Google و Apple يعمل من Lovable Preview أو الموقع المنشور فقط.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -223,7 +246,7 @@ function LoginForm() {
 
   return (
     <form onSubmit={onSubmit}>
-      <h2 className="mb-1.5 text-2xl font-black text-primary-dark">أهلاً بعودتك 👋</h2>
+      <h2 className="mb-1.5 text-2xl font-black text-primary-dark">أهلاً بعودتك</h2>
       <p className="mb-6 text-sm text-muted-foreground">أدخل بياناتك للدخول لحسابك</p>
 
       <Field label="البريد الإلكتروني" required>
@@ -391,7 +414,7 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <form onSubmit={onSubmit}>
-      <h2 className="mb-1.5 text-2xl font-black text-primary-dark">أنشئ حسابك 🚀</h2>
+      <h2 className="mb-1.5 text-2xl font-black text-primary-dark">أنشئ حسابك</h2>
       <p className="mb-6 text-sm text-muted-foreground">انضم لآلاف المستثمرين ورواد الأعمال</p>
 
       <Field label="الاسم الكامل" required>
@@ -473,7 +496,7 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
         />
       </div>
 
-      <SubmitButton loading={loading} variant="orange">إنشاء الحساب ✨</SubmitButton>
+      <SubmitButton loading={loading} variant="orange">إنشاء الحساب</SubmitButton>
     </form>
   );
 }
@@ -481,12 +504,12 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
 /* ───────────── PRIMITIVES ───────────── */
 
 const inputCls =
-  "w-full rounded-xl border-2 border-border bg-white px-4 py-3 ps-11 pe-3 text-[15px] font-medium text-[#343A40] outline-none transition placeholder:text-muted-foreground placeholder:text-sm hover:border-[#DEE2E6] focus:border-primary focus:shadow-[0_0_0_4px_rgba(27,79,138,0.08)]";
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 ps-11 pe-3 text-[15px] font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 placeholder:text-sm hover:border-cyan-200 hover:bg-white focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(6,182,212,0.12)]";
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <label className="mb-1.5 block text-[13px] font-extrabold text-[#495057]">
+      <label className="mb-1.5 block text-[13px] font-extrabold text-slate-700">
         {label}
         {required && <span className="text-[#E74C3C]"> *</span>}
       </label>
@@ -518,7 +541,7 @@ function Checkbox({
       <span
         onClick={() => onChange(!checked)}
         className={`mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-[5px] border-2 transition ${
-          checked ? "border-primary bg-primary text-white" : "border-[#DEE2E6] bg-white"
+            checked ? "border-primary bg-primary text-white" : "border-slate-300 bg-white"
         }`}
       >
         {checked && <Check className="h-3 w-3" strokeWidth={3} />}
@@ -539,13 +562,13 @@ function SubmitButton({
 }) {
   const bg =
     variant === "orange"
-      ? "bg-orange hover:bg-[#C4610A] hover:shadow-[0_6px_20px_rgba(245,130,32,0.3)]"
-      : "bg-primary hover:bg-primary-dark hover:shadow-[0_6px_20px_rgba(27,79,138,0.3)]";
+      ? "bg-[#f97316] hover:bg-[#ea580c] hover:shadow-[0_10px_24px_rgba(249,115,22,0.26)]"
+      : "bg-primary hover:bg-primary-dark hover:shadow-[0_10px_24px_rgba(6,182,212,0.26)]";
   return (
     <button
       type="submit"
       disabled={loading}
-      className={`mt-1 w-full rounded-xl py-3.5 text-base font-black text-white transition active:scale-[.98] disabled:opacity-60 ${bg}`}
+      className={`mt-1 w-full rounded-xl py-3.5 text-base font-black text-white transition active:scale-[.98] disabled:cursor-wait disabled:opacity-70 ${bg}`}
     >
       {loading ? "..." : children}
     </button>
@@ -563,9 +586,18 @@ function SocialButton({
 }) {
   const onClick = async () => {
     if (disabled) return;
+    if (
+      typeof window !== "undefined" &&
+      ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
+    ) {
+      toast.error(
+        "تسجيل الدخول بجوجل عبر Lovable Cloud لا يعمل من localhost. اختبريه من Lovable Preview أو busniss.org، واستخدمي البريد وكلمة المرور محلياً.",
+      );
+      return;
+    }
     const { lovable } = await import("@/integrations/lovable");
     const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: typeof window !== "undefined" ? `${window.location.origin}/journey` : "",
+      redirect_uri: typeof window !== "undefined" ? window.location.origin : "",
     });
     if (result.error) toast.error(friendlyAuthError(result.error));
   };
@@ -574,7 +606,8 @@ function SocialButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-border bg-white px-3 py-2.5 text-sm font-extrabold text-[#495057] transition hover:border-[#DEE2E6] hover:bg-[#F8F9FA] disabled:cursor-not-allowed disabled:opacity-50"
+      title={disabled ? "متاح على Lovable Preview أو الموقع المنشور" : label}
+      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-extrabold text-slate-700 transition hover:border-cyan-200 hover:bg-cyan-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:opacity-100"
     >
       {provider === "google" ? <GoogleIcon /> : <AppleIcon />}
       {label}

@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth/callback")({
   component: AuthCallbackPage,
@@ -8,7 +9,10 @@ export const Route = createFileRoute("/auth/callback")({
 
 function AuthCallbackPage() {
   const navigate = useNavigate();
-  const [message, setMessage] = useState("جاري إكمال تسجيل الدخول...");
+  const { lang, dir } = useI18n();
+  const [message, setMessage] = useState(
+    lang === "ar" ? "جاري إكمال تسجيل الدخول..." : "Completing sign-in...",
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -31,13 +35,19 @@ function AuthCallbackPage() {
 
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
-          throw new Error("لم يتم إنشاء جلسة تسجيل دخول.");
+          throw new Error("No auth session was created.");
         }
 
         navigate({ to: "/dashboard", replace: true });
       } catch (error) {
         console.error("[auth/callback]", error);
-        if (mounted) setMessage("تعذر إكمال تسجيل الدخول. سيتم الرجوع لصفحة الدخول...");
+        if (mounted) {
+          setMessage(
+            lang === "ar"
+              ? "تعذر إكمال تسجيل الدخول. سيتم الرجوع لصفحة الدخول..."
+              : "Could not complete sign-in. Returning to the sign-in page...",
+          );
+        }
         window.setTimeout(() => navigate({ to: "/auth", replace: true }), 1200);
       }
     }
@@ -46,10 +56,10 @@ function AuthCallbackPage() {
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, [navigate, lang]);
 
   return (
-    <main dir="rtl" className="grid min-h-screen place-items-center bg-background px-4">
+    <main dir={dir} className="grid min-h-screen place-items-center bg-background px-4">
       <div className="rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
         <div className="text-sm font-bold text-muted-foreground">{message}</div>
       </div>

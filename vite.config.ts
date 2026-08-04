@@ -7,8 +7,10 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // Load server-only env (no VITE_ prefix) so server routes can read SUPABASE_SERVICE_ROLE_KEY, LOVABLE_API_KEY, etc.
 const serverEnv = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 Object.assign(process.env, serverEnv);
+const isVercel = process.env.VERCEL === "1" || process.env.VERCEL === "true";
 
 export default defineConfig({
+  nitro: isVercel ? { preset: "vercel" } : undefined,
   tanstackStart: {
     server: { entry: "server" },
   },

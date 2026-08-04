@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Mail, Phone, MessageCircle, LifeBuoy, Paperclip, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { PageState } from "@/components/PageState";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
@@ -40,11 +42,15 @@ type Ticket = {
 
 function SupportPage() {
   const { user, loading } = useAuth();
+  const { lang, dir } = useI18n();
+  const isEn = lang === "en";
   const nav = useNavigate();
   const [form, setForm] = useState({ subject: "", message: "" });
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [ticketsLoading, setTicketsLoading] = useState(false);
+  const [ticketsError, setTicketsError] = useState("");
 
   useEffect(() => {
     if (!loading && !user) {
@@ -80,11 +86,18 @@ function SupportPage() {
 
   const loadTickets = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setTicketsLoading(true);
+    setTicketsError("");
+    const { data, error } = await supabase
       .from("support_tickets")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
+    setTicketsLoading(false);
+    if (error) {
+      setTicketsError(error.message);
+      return;
+    }
     setTickets((data ?? []) as Ticket[]);
   };
 
@@ -153,7 +166,7 @@ function SupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={dir}>
       <WorkspaceShell>
       <main className="mx-auto max-w-4xl px-4 py-8 space-y-6">
         <h1 className="text-2xl font-extrabold flex items-center gap-2">
@@ -224,8 +237,26 @@ function SupportPage() {
             <CardTitle>تذاكري ({tickets.length})</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {tickets.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-6">لا توجد تذاكر بعد</p>
+            {ticketsLoading ? (
+              <PageState
+                kind="loading"
+                title={isEn ? "Loading your tickets" : "جارٍ تحميل تذاكرك"}
+                description={isEn ? "We are checking your support history." : "نراجع سجل طلبات الدعم الخاص بك."}
+              />
+            ) : ticketsError ? (
+              <PageState
+                kind="error"
+                title={isEn ? "Tickets could not load" : "تعذّر تحميل التذاكر"}
+                description={ticketsError}
+                actionLabel={isEn ? "Reload tickets" : "إعادة تحميل التذاكر"}
+                onAction={loadTickets}
+              />
+            ) : tickets.length === 0 && (
+              <PageState
+                kind="empty"
+                title={isEn ? "No tickets yet" : "لا توجد تذاكر بعد"}
+                description={isEn ? "Open your first support ticket from the form above." : "افتح أول تذكرة دعم من النموذج بالأعلى."}
+              />
             )}
             {tickets.map((t) => (
               <TicketCard key={t.id} ticket={t} />

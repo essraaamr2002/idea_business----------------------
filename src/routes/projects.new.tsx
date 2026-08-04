@@ -28,6 +28,8 @@ import {
   updateMyProject,
 } from "@/lib/project-wizard.functions";
 import { AiAssistantPanel } from "@/components/project-wizard/AiAssistantPanel";
+import { PageState } from "@/components/PageState";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/projects/new")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -103,7 +105,9 @@ type State = {
 };
 
 function NewProjectWizard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const { lang, dir } = useI18n();
+  const isEn = lang === "en";
   const router = useRouter();
   const { edit: editId } = Route.useSearch();
   const isEdit = !!editId;
@@ -214,17 +218,51 @@ function NewProjectWizard() {
     [s],
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background" dir={dir}>
+        <main className="mx-auto max-w-3xl px-4 py-20">
+          <PageState
+            kind="loading"
+            title={isEn ? "Checking your session" : "جارٍ فحص جلستك"}
+            description={isEn ? "We are preparing the project wizard." : "نجهّز معالج إنشاء المشروع."}
+          />
+        </main>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" dir={dir}>
         <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold">سجّل الدخول لإطلاق مشروع</h1>
-          <button
-            onClick={() => router.navigate({ to: "/auth" })}
-            className="mt-6 rounded-full bg-primary px-6 py-2 text-sm font-bold text-primary-foreground"
-          >
-            تسجيل الدخول
-          </button>
+          <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+            <h1 className="text-2xl font-bold">
+              {isEn ? "Sign in to launch your project" : "سجّل الدخول لإطلاق مشروعك"}
+            </h1>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">
+              {isEn
+                ? "Project listings require an account so we can save drafts, attach guarantees, review ownership, and route investor conversations safely."
+                : "إنشاء المشروع يحتاج حساباً حتى نحفظ المسودة، ونربط الضمانات، ونتحقق من الملكية، ونحمي تواصل المستثمرين داخل المنصة."}
+            </p>
+            <div className="mt-5 grid gap-2 text-start text-sm text-muted-foreground sm:grid-cols-3">
+              <div className="rounded-xl border bg-background p-3">
+                {isEn ? "Your draft is saved to your account." : "مسودتك تُحفظ داخل حسابك."}
+              </div>
+              <div className="rounded-xl border bg-background p-3">
+                {isEn ? "Guarantees are reviewed before publishing." : "الضمانات تُراجع قبل النشر."}
+              </div>
+              <div className="rounded-xl border bg-background p-3">
+                {isEn ? "Investors contact you safely in-platform." : "التواصل مع المستثمرين يتم بأمان."}
+              </div>
+            </div>
+            <button
+              onClick={() => router.navigate({ to: "/auth", search: { redirect: "/projects/new" } as never })}
+              className="mt-6 rounded-full bg-primary px-6 py-2 text-sm font-bold text-primary-foreground"
+            >
+              {isEn ? "Continue to sign in" : "المتابعة لتسجيل الدخول"}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -232,7 +270,7 @@ function NewProjectWizard() {
 
   if (loadingEdit) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background" dir={dir}>
         <div className="mx-auto max-w-3xl px-4 py-20 text-center text-sm text-muted-foreground">
           <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin" />
           جارٍ تحميل بيانات المشروع للتعديل…
@@ -386,51 +424,55 @@ function NewProjectWizard() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-full bg-primary/10 p-2">
+    <div className="min-h-screen bg-[#f4f8fb] dark:bg-background" dir={dir}>
+      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-8">
+        <div className="mb-6 rounded-3xl border border-cyan-100 bg-white/90 p-5 shadow-[0_18px_55px_rgba(6,48,68,0.08)] dark:border-border dark:bg-card/80 sm:p-6">
+          <div className="flex items-start gap-3">
+          <div className="shrink-0 rounded-2xl bg-primary/10 p-3">
             {isEdit ? (
               <Pencil className="h-5 w-5 text-primary" />
             ) : (
               <Rocket className="h-5 w-5 text-primary" />
             )}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">{isEdit ? "تعديل المشروع" : "أنشئ إعلان مشروعك"}</h1>
-            <p className="text-sm text-muted-foreground">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-black leading-tight text-primary-dark dark:text-foreground sm:text-3xl">{isEdit ? "تعديل المشروع" : "أنشئ إعلان مشروعك"}</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
               {isEdit
                 ? "حدّث بيانات مشروعك في الخطوات الست — كل البيانات قابلة للتعديل."
                 : "معالج ذكي من 6 خطوات — مدعوم بالذكاء الاصطناعي."}
             </p>
           </div>
+          </div>
         </div>
 
         {/* Progress */}
-        <div className="mb-8 flex items-center gap-1.5 overflow-x-auto">
+        <div className="mb-6 overflow-x-auto rounded-2xl border border-cyan-100 bg-white/85 p-2 shadow-sm dark:border-border dark:bg-card/70">
+          <div className="flex min-w-max items-center gap-2">
           {STEPS.map((st, i) => (
-            <div key={st.key} className="flex items-center gap-1.5">
+            <div key={st.key} className="flex items-center gap-2">
               <div
-                className={`flex h-8 min-w-8 items-center justify-center gap-1 rounded-full px-3 text-xs font-bold transition ${
+                className={`flex h-10 min-w-10 items-center justify-center gap-2 whitespace-nowrap rounded-full px-3 text-xs font-extrabold transition sm:px-4 ${
                   i < stepIdx
-                    ? "bg-primary/20 text-primary"
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
                     : i === stepIdx
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
+                      ? "bg-primary text-primary-foreground shadow-[0_10px_24px_rgba(6,182,212,0.22)]"
+                      : "bg-slate-100 text-slate-600 dark:bg-muted dark:text-muted-foreground"
                 }`}
               >
                 {i < stepIdx ? <Check className="h-3 w-3" /> : <span>{i + 1}</span>}
-                <span className="hidden sm:inline">{st.title}</span>
+                <span className="hidden md:inline">{st.title}</span>
               </div>
-              {i < STEPS.length - 1 && <ChevronLeft className="h-3 w-3 text-muted-foreground" />}
+              {i < STEPS.length - 1 && <ChevronLeft className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" />}
             </div>
           ))}
+          </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_340px]">
           {/* Step content */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <h2 className="mb-6 text-lg font-bold">
+          <div className="min-w-0 rounded-3xl border border-cyan-100 bg-white/95 p-5 shadow-[0_18px_55px_rgba(6,48,68,0.08)] dark:border-border dark:bg-card sm:p-6">
+            <h2 className="mb-6 text-lg font-black text-foreground">
               {stepIdx + 1}. {step.title}
             </h2>
 
@@ -439,24 +481,24 @@ function NewProjectWizard() {
                 <p className="text-sm text-muted-foreground">
                   هل المشروع قائم وعامل بالفعل، أم فكرة جديدة تبحث عن تمويل؟
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => set("is_existing", true)}
-                    className={`rounded-2xl border-2 p-5 text-right transition ${s.is_existing ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                    className={`min-h-28 rounded-2xl border p-5 text-start transition ${s.is_existing ? "border-primary bg-primary/10 shadow-[0_12px_30px_rgba(6,182,212,0.12)]" : "border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-white dark:border-border dark:bg-background"}`}
                   >
                     <div className="mb-2 text-lg font-bold">نعم، المشروع قائم</div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs leading-6 text-muted-foreground">
                       مشروع يعمل بالفعل ويحتاج لتوسعة أو رأس مال إضافي.
                     </p>
                   </button>
                   <button
                     type="button"
                     onClick={() => set("is_existing", false)}
-                    className={`rounded-2xl border-2 p-5 text-right transition ${!s.is_existing ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                    className={`min-h-28 rounded-2xl border p-5 text-start transition ${!s.is_existing ? "border-primary bg-primary/10 shadow-[0_12px_30px_rgba(6,182,212,0.12)]" : "border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-white dark:border-border dark:bg-background"}`}
                   >
                     <div className="mb-2 text-lg font-bold">لا، فكرة جديدة</div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs leading-6 text-muted-foreground">
                       فكرة لم تُنفّذ بعد وتبحث عن مستثمرين لتأسيسها.
                     </p>
                   </button>
@@ -551,7 +593,7 @@ function NewProjectWizard() {
                     onChange={(e) => uploadMedia(e.target.files)}
                   />
                   {s.media.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
                       {s.media.map((u, i) => (
                         <div
                           key={i}
@@ -570,7 +612,7 @@ function NewProjectWizard() {
                                 s.media.filter((_, j) => j !== i),
                               )
                             }
-                            className="absolute right-1 top-1 rounded-full bg-black/60 p-1 opacity-0 transition group-hover:opacity-100"
+                            className="absolute end-1 top-1 rounded-full bg-black/60 p-1 opacity-0 transition group-hover:opacity-100"
                           >
                             <X className="h-3 w-3 text-white" />
                           </button>
@@ -639,26 +681,26 @@ function NewProjectWizard() {
             {step.key === "funding" && (
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">كيف تريد جمع التمويل؟</p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => set("funding_mode", "marketplace")}
-                    className={`rounded-2xl border-2 p-5 text-right transition ${s.funding_mode === "marketplace" ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                    className={`min-h-32 rounded-2xl border p-5 text-start transition ${s.funding_mode === "marketplace" ? "border-primary bg-primary/10 shadow-[0_12px_30px_rgba(6,182,212,0.12)]" : "border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-white dark:border-border dark:bg-background"}`}
                   >
                     <Users className="mb-2 h-6 w-6 text-primary" />
                     <div className="mb-1 font-bold">السوق الموازي</div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs leading-6 text-muted-foreground">
                       جذب عدة مستثمرين عبر بيع أسهم في السوق العامة — تمويل أكبر.
                     </p>
                   </button>
                   <button
                     type="button"
                     onClick={() => set("funding_mode", "single_investor")}
-                    className={`rounded-2xl border-2 p-5 text-right transition ${s.funding_mode === "single_investor" ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                    className={`min-h-32 rounded-2xl border p-5 text-start transition ${s.funding_mode === "single_investor" ? "border-primary bg-primary/10 shadow-[0_12px_30px_rgba(6,182,212,0.12)]" : "border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-white dark:border-border dark:bg-background"}`}
                   >
                     <User className="mb-2 h-6 w-6 text-primary" />
                     <div className="mb-1 font-bold">مستثمر واحد</div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs leading-6 text-muted-foreground">
                       شريك أو ممول واحد فقط — تواصل مباشر بدون تجزئة.
                     </p>
                   </button>
@@ -694,7 +736,7 @@ function NewProjectWizard() {
                         key={g.value}
                         type="button"
                         onClick={() => set("guarantee_type", g.value)}
-                        className={`rounded-lg border-2 p-3 text-center text-xs font-semibold transition ${s.guarantee_type === g.value ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"}`}
+                        className={`min-h-12 rounded-xl border px-3 py-2 text-center text-xs font-bold leading-5 transition ${s.guarantee_type === g.value ? "border-primary bg-primary/10 text-primary" : "border-slate-200 bg-slate-50 hover:border-cyan-200 hover:bg-white dark:border-border dark:bg-background"}`}
                       >
                         {g.label}
                       </button>
@@ -760,7 +802,7 @@ function NewProjectWizard() {
 
                 {GUARANTEE_TYPES.find((g) => g.value === s.guarantee_type)?.hasTemplate && (
                   <div className="rounded-lg border border-dashed border-primary/40 bg-primary/5 p-3 text-xs">
-                    <div className="mb-2 flex items-center justify-between">
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                       <strong>قالب جاهز للتعبئة والطباعة</strong>
                       <a
                         href={
@@ -783,7 +825,7 @@ function NewProjectWizard() {
                 )}
 
                 <Field label="رفع المستند الموقّع (PDF أو صورة)">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       onClick={() => docRef.current?.click()}
@@ -914,12 +956,12 @@ function NewProjectWizard() {
             )}
 
             {/* Nav buttons */}
-            <div className="mt-8 flex items-center justify-between border-t border-border pt-4">
+            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
                 onClick={() => setStepIdx((i) => Math.max(0, i - 1))}
                 disabled={stepIdx === 0}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold hover:bg-accent disabled:opacity-40"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-bold text-slate-700 transition hover:border-cyan-200 hover:bg-cyan-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-border dark:bg-background sm:w-auto"
               >
                 <ChevronRight className="h-4 w-4" /> السابق
               </button>
@@ -929,7 +971,7 @@ function NewProjectWizard() {
                   onClick={() =>
                     canNext() ? setStepIdx((i) => i + 1) : toast.error("أكمل بيانات هذه الخطوة")
                   }
-                  className="inline-flex items-center gap-1 rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground hover:opacity-90"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-2 text-sm font-black text-primary-foreground shadow-[0_10px_24px_rgba(6,182,212,0.24)] transition hover:opacity-90 sm:w-auto"
                 >
                   التالي <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -938,7 +980,7 @@ function NewProjectWizard() {
                   type="button"
                   onClick={submit}
                   disabled={submitting || !canNext()}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2 text-sm font-bold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-2 text-sm font-black text-primary-foreground shadow-[0_10px_24px_rgba(6,182,212,0.24)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
                   {submitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

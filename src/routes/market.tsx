@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TrendingUp, Layers, Zap, Calculator, ShieldCheck, ArrowLeft } from 'lucide-react'
 import { MarginStatusPanel } from '@/components/market/MarginStatusPanel'
+import { PageState } from '@/components/PageState'
+import { useI18n } from '@/lib/i18n'
 
 
 
@@ -21,9 +23,11 @@ export const Route = createFileRoute('/market')({
 })
 
 function MarketPage() {
-  const { data = [] } = useQuery({ queryKey: ['sm', 'listings'], queryFn: () => smListActive() })
+  const { dir, lang } = useI18n()
+  const isEn = lang === 'en'
+  const { data = [], isLoading, isError, error, refetch } = useQuery({ queryKey: ['sm', 'listings'], queryFn: () => smListActive() })
   return (
-    <div className="container mx-auto py-8 space-y-6" dir="rtl">
+    <div className="container mx-auto py-8 space-y-6" dir={dir}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2"><Layers className="w-8 h-8 text-primary" />السوق الموازي</h1>
@@ -67,8 +71,22 @@ function MarketPage() {
       {/* لوحة حالة الهامش (تظهر فقط للمستخدمين الممولين) */}
       <MarginStatusPanel />
 
-      {data.length === 0 ? (
-        <Card><CardContent className="p-8 text-center text-muted-foreground">لا توجد إدراجات نشطة بعد. كن أول من يطرح مشروعاً!</CardContent></Card>
+      {isLoading ? (
+        <PageState kind="loading" />
+      ) : isError ? (
+        <PageState
+          kind="error"
+          description={(error as Error)?.message}
+          onAction={() => refetch()}
+        />
+      ) : data.length === 0 ? (
+        <PageState
+          kind="empty"
+          title={isEn ? "No active listings yet" : "لا توجد إدراجات نشطة بعد"}
+          description={isEn ? "The first approved tradable projects will appear here." : "ستظهر المشاريع المعتمدة القابلة للتداول هنا."}
+          actionLabel={isEn ? "List a project" : "طرح مشروع"}
+          onAction={() => { window.location.href = "/projects/new" }}
+        />
       ) : (
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
