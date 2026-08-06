@@ -8,7 +8,7 @@ export const listMyInvoices = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("invoices")
-      .select("id, invoice_number, amount, currency, purpose, provider, order_id, transaction_id, status, issued_at, created_at")
+      .select("id, invoice_number, amount, currency, purpose, provider, order_id, transaction_id, status, metadata, issued_at, created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(200);

@@ -74,7 +74,7 @@ export function PageState({
           <Icon className={`h-6 w-6 ${kind === "loading" ? "animate-spin" : ""}`} />
         </div>
         <div className="text-base font-extrabold text-foreground">{finalTitle}</div>
-        <p className="mt-1 max-w-md text-sm text-muted-foreground">{finalDescription}</p>
+        <p className="mt-1 max-w-md text-sm font-medium text-foreground/75">{finalDescription}</p>
         {onAction && kind !== "loading" && (
           <Button type="button" onClick={onAction} className="mt-4 gap-2">
             {kind === "error" && <RefreshCw className="h-4 w-4" />}

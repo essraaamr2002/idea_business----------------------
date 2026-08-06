@@ -87,6 +87,7 @@ export function TopNav() {
     { to: "/wallet", label: t("nav.wallet"), auth: true },
     { to: "/disputes", label: t("nav.disputes"), auth: true },
     { to: "/membership", label: t("nav.membership") },
+    { to: "/calculators", label: t("nav.calculators") },
     { to: "/faq", label: t("nav.faq") },
     { to: "/support", label: t("nav.support") },
   ];

@@ -111,5 +111,17 @@ BEGIN
 END;
 $function$;
 
--- Activate the user's existing pending projects so they appear immediately
-UPDATE public.projects SET status = 'active' WHERE status = 'pending_review';
+-- Keep the RPC private to signed-in users when this migration is applied on
+-- its own (for example through the hosted Supabase SQL Editor).
+REVOKE ALL ON FUNCTION public.create_project_from_wizard(jsonb) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.create_project_from_wizard(jsonb) FROM anon;
+GRANT EXECUTE ON FUNCTION public.create_project_from_wizard(jsonb) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_project_from_wizard(jsonb) TO service_role;
+
+-- Ask PostgREST to discover the RPC immediately instead of waiting for its
+-- schema cache to refresh.
+NOTIFY pgrst, 'reload schema';
+
+-- Existing projects are intentionally not updated here. Keeping this migration
+-- focused on the RPC prevents an unrelated data update from rolling back the
+-- function creation when it is run manually in the hosted SQL Editor.

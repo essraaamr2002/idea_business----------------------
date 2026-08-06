@@ -289,6 +289,8 @@ export const createProjectPurchaseRequest = createServerFn({ method: "POST" })
     const price = Number(project.current_price ?? project.share_price ?? 0);
     if (price <= 0) throw new Error("invalid_project_price");
     const total = price * data.shares;
+    const { calculateInvestmentFees } = await import("./transaction-fees");
+    const fees = calculateInvestmentFees(total);
 
     const { data: inserted, error } = await supabase
       .from("project_purchase_requests")
@@ -299,6 +301,12 @@ export const createProjectPurchaseRequest = createServerFn({ method: "POST" })
         shares: data.shares,
         price_per_share: price,
         total_amount: total,
+        subtotal_amount: fees.subtotal,
+        platform_commission_rate: 0.07,
+        platform_commission_amount: fees.platformCommission,
+        vat_rate: 0.15,
+        vat_amount: fees.vatOnCommission,
+        payable_total: fees.total,
         currency: project.currency || "SAR",
         message: data.message ?? null,
         status: "pending",
@@ -315,5 +323,12 @@ export const createProjectPurchaseRequest = createServerFn({ method: "POST" })
       data: { project_id: project.id, purchase_request_id: inserted.id } as any,
     } as any);
 
-    return { id: inserted.id, total_amount: total, currency: project.currency || "SAR" };
+    return {
+      id: inserted.id,
+      total_amount: total,
+      platform_commission: fees.platformCommission,
+      vat_on_commission: fees.vatOnCommission,
+      payable_total: fees.total,
+      currency: project.currency || "SAR",
+    };
   });

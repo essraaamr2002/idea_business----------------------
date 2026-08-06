@@ -207,8 +207,11 @@
   }
 
   html {
+    width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body,
@@ -232,6 +235,8 @@
   }
 
   body {
+    width: 100%;
+    min-height: 100dvh;
     background-color: var(--color-background);
     color: var(--color-foreground);
     max-width: 100%;
@@ -243,6 +248,18 @@
   canvas,
   svg {
     max-width: 100%;
+    height: auto;
+  }
+
+  iframe {
+    max-width: 100%;
+  }
+
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   button,
@@ -250,6 +267,7 @@
   select,
   textarea {
     max-width: 100%;
+    font: inherit;
   }
 
   p,
@@ -555,5 +573,4 @@ html { scroll-behavior: smooth; }
     background-clip: padding-box;
   }
 }
-
 

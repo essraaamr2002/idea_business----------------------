@@ -94,31 +94,31 @@ function NewsPage() {
   });
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8" dir={dir}>
+    <div className="container mx-auto max-w-5xl px-4 py-8 text-slate-100" dir={dir}>
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 mb-3">
           <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" /></span>
           <span className="text-xs font-bold text-red-600 dark:text-red-400">بث مباشر</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">قناة أخبار IDEA BUSINESS</h1>
-        <p className="text-muted-foreground">كل حدث على المنصة لحظة وقوعه — مشاريع جديدة، مزايدات، صفقات، وإعلانات.</p>
+        <h1 className="mb-2 text-3xl font-bold text-white md:text-4xl">قناة أخبار IDEA BUSINESS</h1>
+        <p className="font-medium text-slate-200">كل حدث على المنصة لحظة وقوعه — مشاريع جديدة، مزايدات، صفقات، وإعلانات.</p>
       </header>
 
-      <Card className="mb-6 border-primary/30 bg-primary/5">
-        <CardHeader className="pb-3"><CardTitle className="flex items-center gap-2 text-base"><Mail className="h-4 w-4 text-primary" /> اشترك في النشرة البريدية</CardTitle></CardHeader>
+      <Card className="mb-6 border-cyan-400/50 bg-slate-900/90 text-white shadow-lg">
+        <CardHeader className="pb-3"><CardTitle className="flex items-center gap-2 text-base text-white"><Mail className="h-4 w-4 text-cyan-300" /> اشترك في النشرة البريدية</CardTitle></CardHeader>
         <CardContent>
           <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (email.trim()) subMut.mutate(email.trim()); }}>
-            <Input type="email" required placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
+            <Input className="border-slate-300 bg-white text-slate-950 placeholder:text-slate-500" type="email" required placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
             <Button type="submit" disabled={subMut.isPending}>{subMut.isPending ? "..." : "اشتراك"}</Button>
           </form>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="live" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="live" className="gap-1"><Radio className="h-4 w-4" /> البث المباشر</TabsTrigger>
-          <TabsTrigger value="news" className="gap-1"><Newspaper className="h-4 w-4" /> الأخبار</TabsTrigger>
-          <TabsTrigger value="blog" asChild><Link to="/blog" className="flex items-center gap-1 justify-center"><BookOpen className="h-4 w-4" /> المدوّنة</Link></TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-slate-100 text-slate-700">
+          <TabsTrigger value="live" className="gap-1 text-slate-700 data-[state=active]:bg-white data-[state=active]:text-slate-950"><Radio className="h-4 w-4" /> البث المباشر</TabsTrigger>
+          <TabsTrigger value="news" className="gap-1 text-slate-700 data-[state=active]:bg-white data-[state=active]:text-slate-950"><Newspaper className="h-4 w-4" /> الأخبار</TabsTrigger>
+          <TabsTrigger value="blog" asChild><Link to="/blog" className="flex items-center justify-center gap-1 text-slate-700"><BookOpen className="h-4 w-4" /> المدوّنة</Link></TabsTrigger>
         </TabsList>
 
         <TabsContent value="live" className="mt-4">
@@ -139,6 +139,7 @@ function NewsPage() {
           ) : !liveItems?.length ? (
             <PageState
               kind="empty"
+              className="border-slate-300 bg-slate-50 text-slate-950"
               title={isEn ? "No live events yet" : "لا توجد أحداث مباشرة بعد"}
               description={isEn ? "Projects, bids, deals, and announcements will appear here as soon as they happen." : "ستظهر المشاريع والمزايدات والصفقات والإعلانات هنا فور حدوثها."}
             />
@@ -181,6 +182,7 @@ function NewsPage() {
           ) : !newsItems?.length ? (
             <PageState
               kind="empty"
+              className="border-slate-300 bg-slate-50 text-slate-950"
               title={isEn ? "No edited news yet" : "لا توجد أخبار محررة بعد"}
               description={isEn ? "Published news and announcements will appear here." : "ستظهر الأخبار والإعلانات المنشورة هنا."}
             />

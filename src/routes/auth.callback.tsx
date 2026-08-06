@@ -16,6 +16,15 @@ function AuthCallbackPage() {
 
   useEffect(() => {
     let mounted = true;
+    const timeoutId = window.setTimeout(() => {
+      if (!mounted) return;
+      setMessage(
+        lang === "ar"
+          ? "استغرق تسجيل الدخول وقتًا أطول من المتوقع. ستتم إعادتك إلى صفحة الدخول..."
+          : "Sign-in took longer than expected. Returning to the sign-in page...",
+      );
+      window.setTimeout(() => navigate({ to: "/auth", replace: true }), 1200);
+    }, 12_000);
 
     async function completeAuth() {
       try {
@@ -38,6 +47,7 @@ function AuthCallbackPage() {
           throw new Error("No auth session was created.");
         }
 
+        window.clearTimeout(timeoutId);
         navigate({ to: "/dashboard", replace: true });
       } catch (error) {
         console.error("[auth/callback]", error);
@@ -55,6 +65,7 @@ function AuthCallbackPage() {
     completeAuth();
     return () => {
       mounted = false;
+      window.clearTimeout(timeoutId);
     };
   }, [navigate, lang]);
 

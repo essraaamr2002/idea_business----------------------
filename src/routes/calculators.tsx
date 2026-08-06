@@ -4,6 +4,7 @@ import { Calculator } from "lucide-react";
 import { ROICalculator } from "@/components/ROICalculator";
 import { CompoundInterestCalc } from "@/components/CompoundInterestCalc";
 import { CurrencyConverter } from "@/components/CurrencyConverter";
+import { IncomeCalculator } from "@/components/IncomeCalculator";
 
 export const Route = createFileRoute("/calculators")({
   head: () => ({ meta: [
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/calculators")({
       <main className="mx-auto max-w-5xl px-4 py-10">
         <PageHeader icon={<Calculator className="h-6 w-6" />} title="الحاسبات" subtitle="أدوات مالية تساعدك على اتخاذ القرار." />
         <div className="grid gap-4 md:grid-cols-2">
+          <IncomeCalculator />
           <ROICalculator />
           <CompoundInterestCalc />
           <div className="md:col-span-2"><CurrencyConverter /></div>

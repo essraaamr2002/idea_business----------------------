@@ -24,7 +24,7 @@ export const Route = createFileRoute("/api/admin/agents/chat")({
         const key = process.env.GEMINI_API_KEY;
         const SUPABASE_URL = process.env.SUPABASE_URL;
         const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!key) return new Response("Missing GEMINI_API_KEY", { status: 500 });
+        if (!key) return new Response("خدمة الوكلاء غير مفعّلة حاليًا. أضف مفتاح مزود الذكاء الاصطناعي من إعدادات الخادم.", { status: 503 });
         if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) return new Response("Missing Supabase env", { status: 500 });
 
         // ===== Verify caller is admin =====

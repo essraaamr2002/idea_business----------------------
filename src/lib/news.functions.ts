@@ -308,13 +308,21 @@ export const updateArticle = createServerFn({ method: "POST" })
     if (!isAdmin && !isSeo) throw new Error("forbidden");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: previous } = await supabaseAdmin
+      .from("articles")
+      .select("published, slug, title, excerpt")
+      .eq("id", data.id)
+      .maybeSingle();
     const { data: row, error } = await supabaseAdmin
       .from("articles")
       .update({ ...(data.patch as any), updated_at: new Date().toISOString() })
       .eq("id", data.id)
-      .select("slug, published")
+      .select("slug, title, excerpt, published")
       .maybeSingle();
     if (error) throw new Error(error.message);
+    if (row?.published && !previous?.published && row.slug) {
+      await broadcastNewArticle(row.slug, row.title, row.excerpt ?? "");
+    }
     if (row?.published && row.slug) {
       try {
         const { pingSearchEngines } = await import("./seo-ping.server");
@@ -431,7 +439,8 @@ async function broadcastNewArticle(slug: string, title: string, excerpt: string)
     const { data: subs } = await supabaseAdmin
       .from("news_subscribers")
       .select("email")
-      .eq("unsubscribed", false);
+      .eq("unsubscribed", false)
+      .not("confirmed_at", "is", null);
     if (!subs?.length) return { sent: 0 };
 
     const siteUrl = process.env.SITE_URL || "https://busniss.org";

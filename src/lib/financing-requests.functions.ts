@@ -5,6 +5,22 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const MIN_DEPOSIT = 10000;
 const LEVERAGE = 1.40;
 
+function throwFinancingError(error: { message?: string; code?: string } | null) {
+  if (!error) return;
+  const message = String(error.message ?? "");
+  console.error("[financing-request]", { code: error.code, message });
+  if (error.code === "23514" || /check constraint/i.test(message)) {
+    throw new Error("إعدادات حالات طلبات التمويل غير متزامنة. يرجى المحاولة بعد تحديث النظام.");
+  }
+  if (error.code === "23503" || /foreign key constraint/i.test(message)) {
+    throw new Error("تعذر ربط طلب التمويل بحساب التداول. تأكد من تفعيل الحساب أولاً.");
+  }
+  if (error.code === "42501" || /row-level security|permission denied/i.test(message)) {
+    throw new Error("ليس لديك صلاحية لتنفيذ هذا الإجراء.");
+  }
+  throw new Error("تعذر حفظ طلب التمويل حالياً. يرجى المحاولة مرة أخرى.");
+}
+
 async function ensureAdmin(supabase: any, userId: string) {
   const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (!data) throw new Error("forbidden");
@@ -69,6 +85,13 @@ export const submitFinancingRequest = createServerFn({ method: "POST" })
 
     const autoReject = reasons.length > 0;
 
+    // An ineligible request does not need a database row. Returning the
+    // reasons directly also keeps this flow compatible with legacy databases
+    // whose status constraint only permits the original values.
+    if (autoReject) {
+      return { ok: false, request: null, reasons };
+    }
+
     const { data: inserted, error } = await supabase
       .from("sm_financing_requests")
       .insert({
@@ -77,14 +100,14 @@ export const submitFinancingRequest = createServerFn({ method: "POST" })
         deposit_amount: data.deposit_amount,
         requested_loan: data.requested_loan,
         leverage_pct: LEVERAGE,
-        status: autoReject ? "auto_rejected" : "pending",
-        auto_reasons: reasons,
+        // Let the database apply its own legacy-compatible default status.
+        auto_reasons: [],
       })
       .select("id, status, auto_reasons, created_at")
       .single();
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
 
-    return { ok: !autoReject, request: inserted, reasons };
+    return { ok: true, request: inserted, reasons: [] };
   });
 
 export const listMyFinancingRequests = createServerFn({ method: "GET" })
@@ -96,7 +119,7 @@ export const listMyFinancingRequests = createServerFn({ method: "GET" })
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false })
       .limit(50);
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
     return data ?? [];
   });
 
@@ -110,7 +133,7 @@ export const cancelFinancingRequest = createServerFn({ method: "POST" })
       .eq("id", data.id)
       .eq("user_id", context.userId)
       .eq("status", "pending");
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
     return { ok: true };
   });
 
@@ -130,7 +153,7 @@ export const adminListFinancingRequests = createServerFn({ method: "GET" })
       .limit(200);
     if (data.status) q = q.eq("status", data.status);
     const { data: rows, error } = await q;
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
     return rows ?? [];
   });
 
@@ -155,7 +178,7 @@ export const adminDecideFinancingRequest = createServerFn({ method: "POST" })
       })
       .eq("id", data.id)
       .eq("status", "pending");
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
     return { ok: true };
   });
 
@@ -169,7 +192,7 @@ export const requestWithdrawCash = createServerFn({ method: "POST" })
     const { data: res, error } = await context.supabase.rpc("sm_request_withdraw_cash", {
       _amount: data.amount,
     });
-    if (error) throw new Error(error.message);
+    throwFinancingError(error);
     return res as {
       ok: boolean;
       reason?: string;

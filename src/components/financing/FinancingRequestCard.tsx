@@ -133,7 +133,8 @@ export function FinancingRequestCard() {
             <p className="text-sm text-muted-foreground">لا توجد طلبات بعد.</p>
           )}
           {list.data?.map((r: any) => {
-            const s = STATUS[r.status] ?? STATUS.pending;
+            const wasAutomaticallyRejected = r.status === "rejected" && r.auto_reasons?.length > 0;
+            const s = wasAutomaticallyRejected ? STATUS.auto_rejected : (STATUS[r.status] ?? STATUS.pending);
             const Icon = s.icon;
             return (
               <div key={r.id} className="border rounded-lg p-3 space-y-2">

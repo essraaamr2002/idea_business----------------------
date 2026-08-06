@@ -22,8 +22,8 @@ function InvoicesPage() {
       </div>
       <p className="mb-4 text-xs text-muted-foreground">تصدر الفاتورة تلقائياً عند نجاح أي عملية دفع. يمكنك تحميل نسخة PDF لكل فاتورة.</p>
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+        <table className="min-w-[760px] w-full text-sm">
           <thead className="bg-muted/40 text-xs text-muted-foreground">
             <tr>
               <th className="p-3 text-right">رقم الفاتورة</th>

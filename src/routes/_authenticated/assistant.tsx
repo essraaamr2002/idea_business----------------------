@@ -104,6 +104,11 @@ function ChatSurface({
       if (givenUp) setGivenUp(false);
       return;
     }
+    const isConfigurationError = /غير مفعّلة|غير مفعلة|GEMINI_API_KEY/i.test(error.message);
+    if (isConfigurationError) {
+      setGivenUp(true);
+      return;
+    }
     const isFinal = retryCount >= MAX_AUTO_RETRIES;
     reportClientEvent({
       source: "assistant-chat",

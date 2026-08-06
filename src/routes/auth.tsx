@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Mail, Lock, User, Eye, EyeOff, Check, Shield, Info } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Check, Shield } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SecurityStrip } from "@/components/SecurityBadges";
 
@@ -41,11 +41,6 @@ function friendlyAuthError(error: unknown) {
   return message || "تعذر تنفيذ عملية المصادقة. تحقق من البيانات وحاول مرة أخرى.";
 }
 
-function isLocalhost() {
-  if (typeof window === "undefined") return false;
-  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-}
-
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -60,7 +55,6 @@ function AuthPage() {
   const { user } = useAuth();
   const nav = useNavigate();
   const [tab, setTab] = useState<"login" | "register" | "staff">("login");
-  const localAuth = isLocalhost();
 
   // Capture ?ref=CODE on landing and persist for claim after sign-up/sign-in
   useEffect(() => {
@@ -152,7 +146,6 @@ function AuthPage() {
             <BrandLogo size={92} />
             <span className="text-xl font-black tracking-[0.16em] text-primary-dark">IDEA BUSINESS</span>
           </Link>
-          {localAuth && <LocalAuthNotice />}
           {/* Tabs */}
           {/* Tabs */}
           <div className="mb-7 grid grid-cols-3 gap-1 rounded-2xl bg-[#eef7fa] p-1">
@@ -184,8 +177,8 @@ function AuthPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
-            <SocialButton provider="google" label="Google" disabled={localAuth} />
-            <SocialButton provider="apple" label="Apple" disabled={localAuth} />
+            <SocialButton provider="google" label="Google" />
+            <SocialButton provider="apple" label="Apple" />
           </div>
 
           <div className="mt-6">
@@ -204,22 +197,6 @@ function AuthPage() {
           </p>
         </div>
       </main>
-    </div>
-  );
-}
-
-function LocalAuthNotice() {
-  return (
-    <div className="mb-5 rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-start text-sm text-slate-700">
-      <div className="flex items-start gap-2">
-        <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-        <div>
-          <div className="font-extrabold text-primary-dark">تسجيل الدخول المحلي</div>
-          <p className="mt-1 leading-relaxed">
-            على localhost استخدمي البريد وكلمة المرور. تسجيل Google و Apple يعمل من Lovable Preview أو الموقع المنشور فقط.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
@@ -496,7 +473,7 @@ function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
         />
       </div>
 
-      <SubmitButton loading={loading} variant="orange">إنشاء الحساب</SubmitButton>
+      <SubmitButton loading={loading} disabled={!agreed} variant="orange">إنشاء الحساب</SubmitButton>
     </form>
   );
 }
@@ -554,10 +531,12 @@ function Checkbox({
 function SubmitButton({
   children,
   loading,
+  disabled,
   variant = "navy",
 }: {
   children: React.ReactNode;
   loading?: boolean;
+  disabled?: boolean;
   variant?: "navy" | "orange";
 }) {
   const bg =
@@ -567,8 +546,8 @@ function SubmitButton({
   return (
     <button
       type="submit"
-      disabled={loading}
-      className={`mt-1 w-full rounded-xl py-3.5 text-base font-black text-white transition active:scale-[.98] disabled:cursor-wait disabled:opacity-70 ${bg}`}
+      disabled={loading || disabled}
+      className={`mt-1 w-full rounded-xl py-3.5 text-base font-black text-white transition active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50 ${bg}`}
     >
       {loading ? "..." : children}
     </button>
@@ -586,20 +565,13 @@ function SocialButton({
 }) {
   const onClick = async () => {
     if (disabled) return;
-    if (
-      typeof window !== "undefined" &&
-      ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
-    ) {
-      toast.error(
-        "تسجيل الدخول بجوجل عبر Lovable Cloud لا يعمل من localhost. اختبريه من Lovable Preview أو busniss.org، واستخدمي البريد وكلمة المرور محلياً.",
-      );
-      return;
-    }
-    const { lovable } = await import("@/integrations/lovable");
-    const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: typeof window !== "undefined" ? window.location.origin : "",
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
-    if (result.error) toast.error(friendlyAuthError(result.error));
+    if (error) toast.error(friendlyAuthError(error));
   };
   return (
     <button

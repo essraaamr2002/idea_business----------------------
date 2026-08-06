@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
 
-type OAuthProvider = "google" | "apple" | "microsoft" | "lovable";
+type OAuthProvider = "google" | "apple";
 
 type OAuthInitiateSearch = {
   provider?: string;
@@ -12,7 +12,7 @@ type OAuthInitiateSearch = {
 };
 
 function isOAuthProvider(provider: string | undefined): provider is OAuthProvider {
-  return provider === "google" || provider === "apple" || provider === "microsoft" || provider === "lovable";
+  return provider === "google" || provider === "apple";
 }
 
 function messageFor(error: unknown, lang: "ar" | "en") {
@@ -36,23 +36,6 @@ function messageFor(error: unknown, lang: "ar" | "en") {
     : "Could not start Google sign-in. Check Supabase settings in Lovable Cloud.";
 }
 
-function normalizeRedirectUri(value: string | undefined) {
-  if (typeof window === "undefined") return value;
-  if (!value) return window.location.origin;
-  try {
-    const url = new URL(value, window.location.origin);
-    if (url.origin !== window.location.origin) return window.location.origin;
-    return url.origin;
-  } catch {
-    return window.location.origin;
-  }
-}
-
-function isLocalhost() {
-  if (typeof window === "undefined") return false;
-  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
-}
-
 export function OAuthInitiatePage({ search }: { search: OAuthInitiateSearch }) {
   const navigate = useNavigate();
   const { lang, dir } = useI18n();
@@ -68,36 +51,33 @@ export function OAuthInitiatePage({ search }: { search: OAuthInitiateSearch }) {
         return;
       }
 
-      if (isLocalhost()) {
-        setError(
-          lang === "ar"
-            ? "تسجيل الدخول بجوجل عبر Lovable Cloud لا يعمل من localhost. افتحي Lovable Preview أو busniss.org لاختبار Google، واستخدمي البريد وكلمة المرور محلياً."
-            : "Google sign-in through Lovable Cloud does not run from localhost. Use Lovable Preview or busniss.org to test Google, and use email/password locally.",
-        );
-        return;
-      }
-
       timeoutId = window.setTimeout(() => {
         if (!mounted) return;
         setError(messageFor(new Error("oauth_timeout"), lang));
       }, 8000);
 
       try {
-        const result = await lovable.auth.signInWithOAuth(search.provider, {
-          redirect_uri: normalizeRedirectUri(search.redirect_uri),
+        const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+          provider: search.provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
         });
 
         if (!mounted) return;
         if (timeoutId) window.clearTimeout(timeoutId);
 
-        if (result?.error) {
-          setError(messageFor(result.error, lang));
+        if (oauthError) {
+          setError(messageFor(oauthError, lang));
           return;
         }
 
-        if (!result?.redirected) {
+        if (!data.url) {
           setError(messageFor(new Error("oauth_no_redirect"), lang));
+          return;
         }
+
+        window.location.assign(data.url);
       } catch (e) {
         if (!mounted) return;
         if (timeoutId) window.clearTimeout(timeoutId);

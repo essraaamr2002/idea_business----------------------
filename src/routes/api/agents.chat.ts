@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/agents/chat")({
         if (!agent) return new Response("Unknown agent", { status: 400 });
 
         const key = process.env.GEMINI_API_KEY;
-        if (!key) return new Response("Missing GEMINI_API_KEY", { status: 500 });
+        if (!key) return new Response("خدمة المساعد الذكي غير مفعّلة حاليًا. يرجى التواصل مع إدارة المنصة.", { status: 503 });
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");

@@ -29,13 +29,22 @@ function createSupabaseAdminClient() {
 }
 
 let _supabaseAdmin: ReturnType<typeof createSupabaseAdminClient> | undefined;
+let _supabaseAdminInitError: Error | undefined;
 
 // Server-side Supabase client with service role - bypasses RLS
 // SECURITY: Only use this for trusted server-side operations, never expose to client code
 // Import like: import { supabaseAdmin } from "@/integrations/supabase/client.server";
 export const supabaseAdmin = new Proxy({} as ReturnType<typeof createSupabaseAdminClient>, {
   get(_, prop, receiver) {
-    if (!_supabaseAdmin) _supabaseAdmin = createSupabaseAdminClient();
+    if (_supabaseAdminInitError) throw _supabaseAdminInitError;
+    if (!_supabaseAdmin) {
+      try {
+        _supabaseAdmin = createSupabaseAdminClient();
+      } catch (error) {
+        _supabaseAdminInitError = error instanceof Error ? error : new Error(String(error));
+        throw _supabaseAdminInitError;
+      }
+    }
     return Reflect.get(_supabaseAdmin, prop, receiver);
   },
 });

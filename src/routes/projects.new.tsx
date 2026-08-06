@@ -293,9 +293,13 @@ function NewProjectWizard() {
         const path = `${user.id}/projects/${Date.now()}-${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage
           .from("community-media")
-          .upload(path, file, { upsert: false });
+          .upload(path, file, { upsert: false, contentType: file.type || undefined });
         if (error) {
-          toast.error(error.message);
+          toast.error(
+            /bucket not found|nosuchbucket/i.test(error.message)
+              ? "مساحة رفع ملفات المشاريع غير مهيأة. يرجى تطبيق تحديثات قاعدة البيانات ثم المحاولة مجددًا."
+              : `تعذر رفع ${file.name}: ${error.message}`,
+          );
           continue;
         }
         const { data: signed } = await supabase.storage
@@ -313,19 +317,27 @@ function NewProjectWizard() {
   const uploadDoc = async (files: FileList | null) => {
     if (!files || !files[0]) return;
     const file = files[0];
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error("يُسمح برفع ملف PDF فقط للمستند الموقّع.");
+      if (docRef.current) docRef.current.value = "";
+      return;
+    }
     if (file.size > 15 * 1024 * 1024) {
       toast.error("الحجم يتجاوز 15MB");
       return;
     }
     setDocUploading(true);
     try {
-      const ext = file.name.split(".").pop() ?? "pdf";
-      const path = `${user.id}/guarantees/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+      const path = `${user.id}/guarantees/${Date.now()}-${crypto.randomUUID()}.pdf`;
       const { error } = await supabase.storage
         .from("kyc-documents")
-        .upload(path, file, { upsert: false });
+        .upload(path, file, { upsert: false, contentType: file.type || "application/pdf" });
       if (error) {
-        toast.error(error.message);
+        toast.error(
+          /bucket not found|nosuchbucket/i.test(error.message)
+            ? "مساحة رفع المستندات غير مهيأة. يرجى تطبيق تحديثات قاعدة البيانات ثم المحاولة مجددًا."
+            : `تعذر رفع المستند: ${error.message}`,
+        );
         return;
       }
       const { data: signed } = await supabase.storage

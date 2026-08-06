@@ -32,12 +32,12 @@ export function BottomNav() {
               <Link
                 to={tab.to}
                 aria-label={label}
-                className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 text-[10px] font-bold transition-colors ${
+                className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-bold transition-colors ${
                   active ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Icon className={`h-5 w-5 ${active ? "fill-primary/10" : ""}`} />
-                <span>{label}</span>
+                <span className="max-w-full truncate">{label}</span>
               </Link>
             </li>
           );

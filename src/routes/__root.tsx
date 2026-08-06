@@ -303,7 +303,14 @@ function AuthInvalidator() {
 }
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
 });
 
 function RootComponent() {
@@ -337,7 +344,7 @@ function RootComponent() {
                 <BrandWatermark />
                 <AssistantFab />
                 <ScrollToTop />
-                <DiagnosticsButton />
+                {import.meta.env.DEV && <DiagnosticsButton />}
                 <CommandPalette />
                 <KeyboardShortcutsHelp />
                 <CookieConsent />

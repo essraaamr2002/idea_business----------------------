@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/assistant/chat")({
         const key = process.env.GEMINI_API_KEY;
         const SUPABASE_URL = process.env.SUPABASE_URL;
         const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!key) return new Response("Missing GEMINI_API_KEY", { status: 500 });
+        if (!key) return new Response("خدمة المساعد الذكي غير مفعّلة حاليًا. يرجى التواصل مع إدارة المنصة.", { status: 503 });
         if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) return new Response("Missing Supabase env", { status: 500 });
 
         const authHeader = request.headers.get("authorization") ?? "";

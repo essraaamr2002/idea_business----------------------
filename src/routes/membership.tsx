@@ -77,16 +77,22 @@ function MembershipPage() {
         toast.error("تعذر إتمام الاشتراك");
       }
     } catch (e: any) {
-      toast.error(e?.message ?? "حدث خطأ");
+      const message = String(e?.message ?? "");
+      if (/missing supabase environment|service_role|environment variable/i.test(message)) {
+        console.error("[membership] Server configuration is incomplete", e);
+        toast.error("خدمة الاشتراك غير متاحة مؤقتاً. يرجى المحاولة لاحقاً.");
+      } else {
+        toast.error(message || "تعذر إتمام الاشتراك");
+      }
     } finally {
       setLoading(null);
     }
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-6">
+    <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:space-y-6 sm:px-6 sm:py-8">
       <div className="text-center">
-        <h1 className="text-3xl font-extrabold">باقات العضوية</h1>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">باقات العضوية</h1>
         <p className="mt-2 text-muted-foreground">أربع باقات بصلاحيات مختلفة، كل باقة بسقف صارم لا يمكن تجاوزه.</p>
       </div>
 
@@ -110,15 +116,15 @@ function MembershipPage() {
           const usage = status?.usage ?? {};
 
           return (
-            <Card key={p.tier} className={`relative space-y-3 border-2 ${meta.ring} p-6`}>
+            <Card key={p.tier} className={`relative min-w-0 space-y-3 border-2 ${meta.ring} p-4 sm:p-6`}>
               {p.tier === "gold" && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[10px] font-bold text-primary-foreground">
                   الأكثر اختيارا
                 </span>
               )}
 
-              <div className="flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-lg font-bold">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <h2 className="flex min-w-0 items-center gap-2 text-lg font-bold">
                   <Icon className="h-5 w-5" /> {TIER_LABELS[p.tier] ?? p.name_ar}
                 </h2>
                 {isCurrent && <Badge variant="secondary">حالية</Badge>}
@@ -142,7 +148,7 @@ function MembershipPage() {
               {isCurrent && (
                 <div className="rounded-lg bg-muted/50 p-2 text-[11px]">
                   استهلاكك هذا الشهر:
-                  <div className="mt-1 grid grid-cols-2 gap-1 tabular-nums">
+                  <div className="mt-1 grid grid-cols-1 gap-1 tabular-nums min-[380px]:grid-cols-2">
                     <span>Projects {usage.projects}/{fmtCap(p.projects_cap)}</span>
                     <span>إعجابات {usage.likes}/{fmtCap(p.likes_cap)}</span>
                     <span>تعليقات {usage.comments}/{fmtCap(p.comments_cap)}</span>
@@ -169,7 +175,7 @@ function MembershipPage() {
 
       {status && (
         <Card className="p-4 text-xs text-muted-foreground">
-          <p className="flex items-center gap-1">
+          <p className="flex flex-wrap items-center gap-1 leading-relaxed">
             <Wallet className="h-3.5 w-3.5" />
             رصيد المحفظة: <span className="font-bold text-foreground tabular-nums">{status.wallet_balance} {status.wallet_currency}</span>
             ، عند نقص الرصيد سيتم توجيهك لبوابة الدفع.
@@ -188,9 +194,9 @@ function MembershipPage() {
 
 function Feature({ label, unl }: { label: string; unl?: boolean }) {
   return (
-    <li className="flex items-center gap-2">
+    <li className="flex min-w-0 items-start gap-2">
       {unl ? <Inf className="h-3.5 w-3.5 text-primary" /> : <Check className="h-3.5 w-3.5 text-primary" />}
-      <span>{label}</span>
+      <span className="min-w-0 break-words">{label}</span>
     </li>
   );
 }

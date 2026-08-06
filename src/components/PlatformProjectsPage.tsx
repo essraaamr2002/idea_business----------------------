@@ -10,6 +10,7 @@ import { createInvestmentOffer, createProjectPurchaseRequest } from "@/lib/inves
 import { bumpMyProject } from "@/lib/founder-dashboard.functions";
 import { checkSeriousnessDeposit } from "@/lib/seriousness-deposit.functions";
 import { getFeedAds } from "@/lib/ads.functions";
+import { calculateInvestmentFees } from "@/lib/transaction-fees";
 import { AdCard } from "@/components/ads/AdCard";
 import { AdsDashboard } from "@/components/AdsDashboard";
 import { BrandedStripeCheckout } from "@/components/BrandedStripeCheckout";
@@ -752,6 +753,8 @@ function ActionDialog({ open, onOpenChange, mode, project, auction, currentProfi
   const fee = seriousnessFee(currentProfile?.membership);
   const currency = auction?.currency || project?.currency || "SAR";
   const unitPrice = Number(project?.current_price ?? project?.share_price ?? auction?.current_price ?? auction?.start_price ?? 0);
+  const feeBase = mode === "purchase" ? unitPrice * shares : amount;
+  const feeBreakdown = calculateInvestmentFees(feeBase);
 
   useEffect(() => {
     if (!open) return;
@@ -879,6 +882,21 @@ function ActionDialog({ open, onOpenChange, mode, project, auction, currentProfi
                   <div className="text-xs text-muted-foreground">الإجمالي التقريبي</div>
                   <div className="mt-1 text-lg font-black">{mode === "purchase" ? money(unitPrice * shares, currency) : money(amount, currency)}</div>
                 </div>
+              </div>
+            )}
+
+            {(mode === "offer" || mode === "purchase") && feeBase > 0 && (
+              <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 text-sm">
+                <div className="mb-3 flex items-center gap-2 font-black">
+                  <FileText className="h-4 w-4 text-primary" /> ملخص التكلفة والفاتورة
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between gap-3"><span className="text-muted-foreground">قيمة الاستثمار</span><strong>{money(feeBreakdown.subtotal, currency)}</strong></div>
+                  <div className="flex justify-between gap-3"><span className="text-muted-foreground">عمولة المنصة (7%)</span><strong>{money(feeBreakdown.platformCommission, currency)}</strong></div>
+                  <div className="flex justify-between gap-3"><span className="text-muted-foreground">ضريبة القيمة المضافة (15% من العمولة)</span><strong>{money(feeBreakdown.vatOnCommission, currency)}</strong></div>
+                  <div className="flex justify-between gap-3 border-t border-border pt-2 text-sm"><span className="font-black">الإجمالي عند الدفع داخل المنصة</span><strong className="text-primary">{money(feeBreakdown.total, currency)}</strong></div>
+                </div>
+                <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">بعد نجاح الدفع تصدر فاتورة آلية تحمل هوية IDEA BUSINESS وبيانات المشروع وعدد الأسهم وتفاصيل الرسوم، وتكون مستندًا مكمّلًا لعقد الاستثمار.</p>
               </div>
             )}
 
@@ -1320,6 +1338,15 @@ export default function PlatformProjectsPage() {
         </aside>
 
         <section className="min-w-0 space-y-4">
+          <div role="note" className="rounded-2xl border border-amber-400/50 bg-amber-50 p-4 text-amber-950 shadow-sm dark:bg-amber-950/40 dark:text-amber-100">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-300" />
+              <div className="min-w-0">
+                <h2 className="text-sm font-black">احمِ استثمارك وادفع داخل المنصة</h2>
+                <p className="mt-1 text-xs font-medium leading-6 sm:text-sm">يمكنك التواصل مع صاحب المشروع عبر واتساب والاتفاق معه، لكن الدفع خارج المنصة يفقدك حماية IDEA BUSINESS والضمانات المرتبطة بالعملية، مثل سند الأمر أو إيصال الأمانة وغيرها. عند الدفع داخل المنصة نوثّق الاستثمار ونصدر فاتورة وعقدًا ونحافظ على مسار واضح لحماية حقوقك.</p>
+              </div>
+            </div>
+          </div>
           {/* Header */}
           <div className="rounded-2xl border border-border bg-card p-3 sm:p-4">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
