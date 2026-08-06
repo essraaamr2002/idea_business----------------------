@@ -9,6 +9,13 @@ import type { Database } from "@/integrations/supabase/types";
 
 type ChatBody = { messages?: unknown; agent?: unknown };
 
+const SAFE_FALLBACK_TOOLS = [
+  "get_my_profile",
+  "list_my_projects",
+  "platform_link",
+  "start_kyc",
+] as const;
+
 export const Route = createFileRoute("/api/assistant/chat")({
   server: {
     handlers: {
@@ -45,12 +52,31 @@ export const Route = createFileRoute("/api/assistant/chat")({
           .from("profiles").select("membership").eq("id", userId).maybeSingle();
         const membership = (profile?.membership ?? "basic") as string;
 
-        const { data: permRow } = await supabase
+        const { data: storedPermRow, error: permissionsError } = await supabase
           .from("agents_membership_permissions")
           .select("allowed_tools, daily_quota, enabled")
           .eq("membership", membership as any)
           .eq("agent_id", agentId)
           .maybeSingle();
+
+        // Some existing deployments predate the agent-permissions migration.
+        // Keep chat usable with a conservative read-only policy only when the
+        // relation itself is missing; never override an explicit disabled row.
+        const permissionsTableMissing =
+          permissionsError?.code === "PGRST205" || permissionsError?.code === "42P01";
+        const permRow = permissionsTableMissing
+          ? { allowed_tools: [...SAFE_FALLBACK_TOOLS], daily_quota: 20, enabled: true }
+          : storedPermRow;
+
+        if (permissionsError && !permissionsTableMissing) {
+          console.error("[assistant/chat] permissions lookup failed", {
+            code: permissionsError.code,
+            message: permissionsError.message,
+            membership,
+            agentId,
+          });
+          return new Response("تعذر التحقق من صلاحيات الوكيل حاليًا", { status: 503 });
+        }
 
         if (!permRow || !permRow.enabled) {
           return new Response("هذا الوكيل غير متاح لعضويتك الحالية", { status: 403 });

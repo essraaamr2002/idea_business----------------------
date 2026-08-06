@@ -91,7 +91,7 @@ function Home() {
         <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
           {/* Centered glowing logo */}
           <div className="flex flex-col items-center text-center">
-            <Link to="/future-lab" className="inline-flex items-center gap-2 rounded-full glass-pill px-4 py-1.5 text-xs font-extrabold text-cyan-200 hover:scale-105 transition">
+            <Link to="/future-lab" className="inline-flex items-center gap-2 rounded-full border border-cyan-700/25 bg-white/70 px-4 py-1.5 text-xs font-extrabold text-cyan-900 shadow-sm transition hover:scale-105 dark:bg-cyan-950/40 dark:text-cyan-100">
               <Sparkles className="h-3.5 w-3.5" />
               مختبر المستقبل — 5 ميزات جديدة
             </Link>
@@ -101,7 +101,7 @@ function Home() {
               <br />
               <span className="text-neon">{t("hero.title2")}</span>
             </h1>
-            <p className="mt-4 max-w-2xl text-base font-semibold leading-relaxed text-cyan-100/80 md:text-lg">
+            <p className="mt-4 max-w-2xl text-base font-semibold leading-relaxed text-slate-800 md:text-lg dark:text-cyan-100/90">
               {t("hero.subtitle")}
             </p>
             <p className="mt-1 max-w-2xl text-sm font-medium text-muted-foreground">
@@ -116,7 +116,7 @@ function Home() {
                 </Button>
               </Link>
               <Link to="/projects/new" search={{ edit: undefined }}>
-                <Button size="lg" variant="outline" className="font-extrabold h-12 px-7 rounded-full border-2 border-cyan-400/40 bg-cyan-400/5 text-cyan-100 hover:bg-cyan-400/10">
+                <Button size="lg" variant="outline" className="h-12 rounded-full border-2 border-cyan-700/50 bg-white/70 px-7 font-extrabold text-cyan-900 shadow-sm hover:bg-cyan-100 dark:border-cyan-400/40 dark:bg-cyan-400/5 dark:text-cyan-100 dark:hover:bg-cyan-400/10">
                   {t("cta.launch")}
                 </Button>
               </Link>
@@ -136,12 +136,12 @@ function Home() {
 
           {/* AI Integration Showcase — glass cards in 3D */}
           <div className="mt-14">
-            <div className="text-center text-sm font-extrabold tracking-wider text-cyan-200/80">
+            <div className="text-center text-sm font-extrabold tracking-wider text-primary dark:text-cyan-200/80">
               AI INTEGRATION SHOWCASE
             </div>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               <div className="glass-card tilt-3d md:col-span-2 rounded-2xl p-5">
-                <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-200">
+                <div className="flex items-center gap-2 text-sm font-extrabold text-primary dark:text-cyan-200">
                   <Bot className="h-4 w-4" /> AI Idea Generation
                 </div>
                 <div className="mt-3 rounded-xl border border-cyan-400/20 bg-[#07142F]/60 p-3 text-xs font-medium text-cyan-100/70">
@@ -166,10 +166,10 @@ function Home() {
               <div className="flex flex-col gap-5">
                 <div className="glass-card tilt-3d rounded-2xl p-5">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-200">
+                    <div className="flex items-center gap-2 text-sm font-extrabold text-primary dark:text-cyan-200">
                       <BarChart3 className="h-4 w-4" /> AI Business Analytics
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-700 dark:text-emerald-300">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 pulse-dot" /> LIVE
                     </span>
                   </div>
@@ -180,7 +180,7 @@ function Home() {
                   </div>
                 </div>
                 <div className="glass-card tilt-3d rounded-2xl p-5">
-                  <div className="flex items-center gap-2 text-sm font-extrabold text-cyan-200">
+                  <div className="flex items-center gap-2 text-sm font-extrabold text-primary dark:text-cyan-200">
                     <Activity className="h-4 w-4" /> AI Project Automation
                   </div>
                   <svg viewBox="0 0 200 60" className="mt-3 w-full">
