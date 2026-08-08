@@ -95,7 +95,7 @@ export function TopNav() {
   const navLinks = [...primaryLinks, ...moreLinks];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md" dir={dir}>
+    <header className="top-nav sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md" dir={dir}>
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-3 sm:px-4">
         <div className="flex min-w-0 items-center gap-2 xl:gap-4 2xl:gap-5">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>

@@ -58,7 +58,7 @@ export const createProjectFromWizard = createServerFn({ method: "POST" })
       throw new Error(error.message || "create_project_failed");
     }
 
-    const projectId = String((result as any)?.id || "");
+    const projectId = String((result as any)?.project_id || "");
     const status = String((result as any)?.status || (data.publish_in_community ? "pending_review" : "draft"));
 
     if (!projectId) {

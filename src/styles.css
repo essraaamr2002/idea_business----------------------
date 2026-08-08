@@ -414,6 +414,18 @@
 }
 
 @layer utilities {
+  .top-nav a,
+  .top-nav button,
+  .top-nav [role="menuitem"] {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .top-nav a,
+  .top-nav button {
+    white-space: nowrap;
+  }
+
   .ib-responsive-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
