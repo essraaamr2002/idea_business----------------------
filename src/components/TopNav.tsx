@@ -97,7 +97,7 @@ export function TopNav() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/85 backdrop-blur-md" dir={dir}>
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-3 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2 xl:gap-5">
+        <div className="flex min-w-0 items-center gap-2 xl:gap-4 2xl:gap-5">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <button
@@ -153,13 +153,13 @@ export function TopNav() {
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 xl:flex">
+          <nav className="hidden min-w-0 flex-nowrap items-center gap-1 xl:flex">
             {primaryLinks.filter((l) => !l.auth || user).map((l) => (
               <NavItem key={l.to} to={l.to} label={l.label} exact={l.exact} />
             ))}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold text-muted-foreground transition hover:bg-muted hover:text-foreground">
+                <button className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-bold text-muted-foreground transition hover:bg-muted hover:text-foreground">
                   {t("nav.more")} <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                 </button>
               </DropdownMenuTrigger>
@@ -188,7 +188,7 @@ export function TopNav() {
           <Link
             to="/projects/new"
             search={{ edit: undefined }}
-            className="hidden lg:inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-soft hover:opacity-90"
+            className="hidden items-center gap-1 whitespace-nowrap rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-soft hover:opacity-90 lg:inline-flex"
           >
             <Plus className="h-3.5 w-3.5" /> {t("nav.newProject")}
           </Link>
@@ -255,7 +255,7 @@ export function TopNav() {
                     premium={!!me?.verified_blue}
                     fallback={me?.display_name ?? user.email ?? "?"}
                   />
-                  <span className="hidden sm:inline truncate">{me?.display_name || user.email?.split("@")[0]}</span>
+                  <span className="hidden truncate whitespace-nowrap sm:inline">{me?.display_name || user.email?.split("@")[0]}</span>
                   {me?.verified_blue && <CheckCircle2 className="h-3.5 w-3.5 text-[#1d9bf0] fill-[#1d9bf0]" />}
                   <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-60" />
                 </button>
@@ -305,7 +305,7 @@ function NavItem({ to, label, exact }: { to: string; label: string; exact?: bool
   return (
     <Link
       to={to}
-      className="rounded-full px-3 py-1.5 text-sm font-bold text-muted-foreground transition hover:bg-muted hover:text-foreground [&.active]:bg-primary/10 [&.active]:text-primary"
+      className="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-bold leading-6 text-muted-foreground transition hover:bg-muted hover:text-foreground [&.active]:bg-primary/10 [&.active]:text-primary"
       activeProps={{ className: "active" }}
       activeOptions={{ exact: !!exact }}
     >
